@@ -8,7 +8,7 @@
 # Tools
 BENDER	  ?= bender
 PYTHON3   ?= python3
-VERILATOR ?= /foss/tools/bin/verilator
+VERILATOR ?= verilator
 YOSYS     ?= yosys
 OPENROAD  ?= openroad
 KLAYOUT   ?= klayout
@@ -101,7 +101,7 @@ verilator/obj_dir/Vtb_croc_soc: verilator/croc.f $(SW_HEX)
 
 ## Simulate RTL using Verilator
 verilator: verilator/obj_dir/Vtb_croc_soc
-	cd verilator; obj_dir/Vtb_croc_soc +binary="$(realpath $(SW_HEX))"
+	cd verilator; obj_dir/Vtb_croc_soc +binary="$(realpath $(SW_HEX))" --trace
 
 .PHONY: verilator vsim vsim-yosys
 

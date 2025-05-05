@@ -103,6 +103,12 @@ module croc_domain import croc_pkg::*; #(
   sbr_obi_req_t [NumSramBanks-1:0] xbar_mem_bank_obi_req;
   sbr_obi_rsp_t [NumSramBanks-1:0] xbar_mem_bank_obi_rsp;
 
+  // spi rom
+  sbr_obi_req_t  xbar_spi_rom_obi_req;
+  sbr_obi_rsp_t  xbar_spi_rom_obi_rsp;
+
+
+
   // periph bus
   sbr_obi_req_t xbar_periph_obi_req;
   sbr_obi_rsp_t xbar_periph_obi_rsp;
@@ -121,6 +127,9 @@ module croc_domain import croc_pkg::*; #(
     assign xbar_mem_bank_obi_req[i]     = all_sbr_obi_req[XbarBank0+i];
     assign all_sbr_obi_rsp[XbarBank0+i] = xbar_mem_bank_obi_rsp[i];
   end
+
+  assign xbar_spi_rom_obi_req        =  all_sbr_obi_req[XbarSPI];
+  assign all_sbr_obi_rsp[XbarSPI]    = xbar_spi_rom_obi_rsp;
 
   assign user_sbr_obi_req_o          = all_sbr_obi_req[XbarUser];
   assign all_sbr_obi_rsp[XbarUser]   = user_sbr_obi_rsp_i;
@@ -392,6 +401,19 @@ module croc_domain import croc_pkg::*; #(
 
     assign bank_gnt = 1'b1;
   end
+
+  obi_spi_rom #(
+    .ObiCfg    ( SbrObiCfg     ),
+    .obi_req_t ( sbr_obi_req_t ),
+    .obi_rsp_t ( sbr_obi_rsp_t ),
+    .BaseAddr (SPIBaseAddr),
+    .Size(SPIAddrRange)
+  ) i_spi_rom (
+    .clk_i,
+    .rst_ni,
+    .obi_req_i(xbar_spi_rom_obi_req),
+    .obi_rsp_o(xbar_spi_rom_obi_rsp)
+  );
 
 
   // Xbar space error subordinate

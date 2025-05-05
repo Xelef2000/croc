@@ -32,37 +32,29 @@ uint32_t isqrt(uint32_t n) {
 }
 
 int main() {
-    uart_init(); // setup the uart peripheral
-
-    // simple printf support (only prints text and hex numbers)
-    printf("Hello World!\n");
-    // wait until uart has finished sending
+    uart_init();
+    printf("Starting ROM test...\n");
     uart_write_flush();
-
-    // toggling some GPIOs
-    gpio_set_direction(0xFFFF, 0x000F); // lowest four as outputs
-    gpio_write(0x0A);  // ready output pattern
-    gpio_enable(0xFF); // enable lowest eight
-    // wait a few cycles to give GPIO signal time to propagate
-    asm volatile ("nop; nop; nop; nop; nop;");
-    printf("GPIO (expect 0xA0): 0x%x\n", gpio_read());
-
-    gpio_toggle(0x0F); // toggle lower 8 GPIOs
-    asm volatile ("nop; nop; nop; nop; nop;");
-    printf("GPIO (expect 0x50): 0x%x\n", gpio_read());
+    
+    // Print address we're about to access to help with debugging
+    printf("About to access ROM at address 0x10001000\n");
     uart_write_flush();
-
-    // doing some compute
-    uint32_t start = get_mcycle();
-    uint32_t res   = isqrt(1234567890UL);
-    uint32_t end   = get_mcycle();
-    printf("Result: 0x%x, Cycles: 0x%x\n", res, end - start);
+    
+    // Access ROM very carefully with volatile pointer
+    volatile uint32_t* rom_ptr = (volatile uint32_t*)0x10001000;
+    printf("ROM pointer created\n");
     uart_write_flush();
-
-    // using the timer
-    printf("Tick\n");
-    sleep_ms(10);
-    printf("Tock\n");
+    
+    // Add a delay to ensure UART output completes
+    for(volatile int i=0; i<1000; i++) { asm("nop"); }
+    
+    // Try the actual read
+    uint32_t rom_val = *rom_ptr;
+    
+    // If we get here, print the value
+    printf("ROM read successful! Value: 0x%x\n", rom_val);
     uart_write_flush();
+    
+    // Rest of your program...
     return 1;
 }
