@@ -30,7 +30,7 @@ module obi_spi_rom #(
     // Define some registers to hold the requests fields
     logic req_d, req_q, req_qq; // Request valid (added req_qq for two-cycle delay for SPI response)
     logic we_d, we_q, we_qq;    // Write enable
-    logic [ObiCfg.AddrWidth-1:0] addr_d, addr_q, addr_qq; // Internal address of the word to read
+    logic [ObiCfg.AddrWidth-1:0] addr_d, addr_q, addr_qq, spi_address; // Internal address of the word to read
     logic [ObiCfg.IdWidth-1:0] id_d, id_q, id_qq; // Id of the request, must be same for the response
     
     // Check if address is in range
@@ -71,19 +71,23 @@ module obi_spi_rom #(
     logic rsp_err; // Error field of the obi response
 
 
-
     // For development - just return all 1s for reads and error for writes
     always_comb begin
         rsp_data = '0;
         rsp_err = '0;
+        spi_address = addr_qq - BaseAddr;
         
-        if (req_qq) begin
-            if (~we_qq) begin
-                // For development, return all 1s for any read
-                rsp_data = 32'hFFFF_FFFF;
-            // end else begin
-            //     // Signal error for write attempts - ROM is read-only
-            //     rsp_err = 1'b1;
+        if(req_qq) begin
+            if(~we_qq) begin
+                case(spi_address)
+                    32'h0: rsp_data = 32'h4647_4E20;
+                    32'h4: rsp_data = 32'h5241_5320;
+                    32'h8: rsp_data = 32'h4153_4943;
+                    32'hC: rsp_data = 32'h4647_4E20;
+                    default: rsp_data = spi_address;
+                endcase
+            end else begin
+                rsp_err = '1;
             end
         end
     end

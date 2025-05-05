@@ -41,7 +41,7 @@ int main() {
     uart_write_flush();
     
     // Access ROM very carefully with volatile pointer
-    volatile uint32_t* rom_ptr = (volatile uint32_t*)0x10001000;
+    volatile uint32_t* rom_ptr = (volatile uint32_t*)0x10001004;
     printf("ROM pointer created\n");
     uart_write_flush();
     
