@@ -75,10 +75,10 @@ module obi_spi_rom #(
     always_comb begin
         rsp_data = '0;
         rsp_err = '0;
-        spi_address = addr_qq - BaseAddr;
+        spi_address = addr_q - BaseAddr;
         
-        if(req_qq) begin
-            if(~we_qq) begin
+        if(req_q) begin
+            if(~we_q) begin
                 case(spi_address)
                     32'h0: rsp_data = 32'h4647_4E20;
                     32'h4: rsp_data = 32'h5241_5320;
@@ -102,9 +102,9 @@ module obi_spi_rom #(
     // A channel
     assign obi_rsp_o.gnt = obi_req_i.req && addr_in_range;
     // R channel:
-    assign obi_rsp_o.rvalid = req_qq;
+    assign obi_rsp_o.rvalid = req_q;
     assign obi_rsp_o.r.rdata = rsp_data;
-    assign obi_rsp_o.r.rid = id_qq;
+    assign obi_rsp_o.r.rid = id_q;
     assign obi_rsp_o.r.err = rsp_err;
     assign obi_rsp_o.r.r_optional = '0;
 endmodule
