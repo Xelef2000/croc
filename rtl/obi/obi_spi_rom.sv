@@ -32,7 +32,8 @@ module obi_spi_rom #(
     logic we_d, we_q, we_qq;    // Write enable
     logic [ObiCfg.AddrWidth-1:0] addr_d, addr_q, addr_qq, spi_address; // Internal address of the word to read
     logic [ObiCfg.IdWidth-1:0] id_d, id_q, id_qq; // Id of the request, must be same for the response
-    
+    logic [ObiCfg.DataWidth-1:0] data_d, data_q; // Data to be written (for write requests)
+
     // Check if address is in range
     logic addr_in_range;
     assign addr_in_range = (obi_req_i.a.addr >= BaseAddr) && 
@@ -43,6 +44,7 @@ module obi_spi_rom #(
     assign id_d = obi_req_i.a.aid;
     assign we_d = obi_req_i.a.we;
     assign addr_d = obi_req_i.a.addr;
+    assign data_d = obi_req_i.a.wdata;
 
     always_ff @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni) begin
@@ -54,6 +56,7 @@ module obi_spi_rom #(
             we_qq <= '0;
             addr_q <= '0;
             addr_qq <= '0;
+            data_q <= '0;
         end else begin
             req_q <= req_d;
             req_qq <= req_q;
@@ -63,6 +66,7 @@ module obi_spi_rom #(
             we_qq <= we_q;
             addr_q <= addr_d;
             addr_qq <= addr_q;
+            data_q <= data_d;
         end
     end
 
@@ -70,24 +74,24 @@ module obi_spi_rom #(
     logic [ObiCfg.DataWidth-1:0] rsp_data; // Data field of the obi response
     logic rsp_err; // Error field of the obi response
 
+    logic [31:0] memory [0:Size/4-1]; 
 
-    // For development - just return all 1s for reads and error for writes
+
     always_comb begin
         rsp_data = '0;
         rsp_err = '0;
         spi_address = addr_q - BaseAddr;
         
         if(req_q) begin
-            if(~we_q) begin
-                case(spi_address)
-                    32'h0: rsp_data = 32'h4647_4E20;
-                    32'h4: rsp_data = 32'h5241_5320;
-                    32'h8: rsp_data = 32'h4153_4943;
-                    32'hC: rsp_data = 32'h4647_4E20;
-                    default: rsp_data = spi_address;
-                endcase
+            if(we_q) begin
+                // Write request
+                memory[spi_address] = data_q;
+                rsp_data = '0; // No data to return on write
+                rsp_err = '0; // No error
             end else begin
-                rsp_err = '1;
+                // Read request
+                rsp_data = memory[spi_address];
+                rsp_err = '0; // No error
             end
         end
     end

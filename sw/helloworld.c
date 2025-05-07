@@ -47,7 +47,10 @@ int main() {
     
     // Add a delay to ensure UART output completes
     for(volatile int i=0; i<1000; i++) { asm("nop"); }
-    
+
+    // Write 
+    *rom_ptr = 0xDEADBEEF; 
+
     // Try the actual read
     uint32_t rom_val = *rom_ptr;
     
