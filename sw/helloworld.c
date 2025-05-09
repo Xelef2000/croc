@@ -37,25 +37,24 @@ int main() {
     uart_write_flush();
     
     // Print address we're about to access to help with debugging
-    printf("About to access ROM at address 0x10001000\n");
+    printf("About to access address 0x10001000\n");
     uart_write_flush();
     
-    // Access ROM very carefully with volatile pointer
-    volatile uint32_t* rom_ptr = (volatile uint32_t*)0x10001004;
-    printf("ROM pointer created\n");
+    volatile uint32_t* ram_ptr = (volatile uint32_t*)0x10001016;
+    printf("pointer created\n");
     uart_write_flush();
     
     // Add a delay to ensure UART output completes
     for(volatile int i=0; i<1000; i++) { asm("nop"); }
 
     // Write 
-    *rom_ptr = 0xDEADBEEF; 
+    *ram_ptr = 0xDEADBEEF; 
 
     // Try the actual read
-    uint32_t rom_val = *rom_ptr;
+    uint32_t ram_val = *ram_ptr;
     
     // If we get here, print the value
-    printf("ROM read successful! Value: 0x%x\n", rom_val);
+    printf("read successful! Value: 0x%x\n", ram_val);
     uart_write_flush();
     
     // Rest of your program...
