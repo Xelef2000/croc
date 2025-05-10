@@ -3,14 +3,14 @@
 +incdir+/home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/cve2/include
 +incdir+/home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/obi/include
 +incdir+/home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/register_interface/include
-+define+TARGET_ASIC
 +define+TARGET_FLIST
-+define+TARGET_IHP13
++define+TARGET_FPGA
++define+TARGET_GENESYS2
 +define+TARGET_RTL
-+define+TARGET_SYNTHESIS
-+define+VERILATOR=1
-+define+SYNTHESIS=1
-+define+COMMON_CELLS_ASSERTS_OFF=1
+/home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/tech_cells_generic/fpga/pad_functional_xilinx.sv
+/home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/tech_cells_generic/fpga/tc_clk_xilinx.sv
+/home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/tech_cells_generic/fpga/tc_sram_xilinx.sv
+/home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/tech_cells_generic/tc_sram_impl.sv
 /home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/common_cells/binary_to_gray.sv
 /home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/common_cells/cb_filter_pkg.sv
 /home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/common_cells/cc_onehot.sv
@@ -157,8 +157,6 @@
 /home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/timer_unit/timer_unit_counter_presc.sv
 /home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/timer_unit/apb_timer_unit.sv
 /home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/timer_unit/timer_unit.sv
-/home/felix/Documents/Projects/FPGA/vlsi2/croc/ihp13/tc_clk.sv
-/home/felix/Documents/Projects/FPGA/vlsi2/croc/ihp13/tc_sram_impl.sv
 /home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/croc_pkg.sv
 /home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/user_pkg.sv
 /home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/soc_ctrl/soc_ctrl_reg_pkg.sv
@@ -170,5 +168,6 @@
 /home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/croc_domain.sv
 /home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/user_domain.sv
 /home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/croc_soc.sv
-/home/felix/Documents/Projects/FPGA/vlsi2/croc/rtl/croc_chip.sv
+/home/felix/Documents/Projects/FPGA/vlsi2/croc/xilinx/hw/croc_xilinx.sv
+/home/felix/Documents/Projects/FPGA/vlsi2/croc/xilinx/hw/fan_ctrl.sv
 

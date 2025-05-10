@@ -63,6 +63,10 @@ sources:
     files:
       - rtl/tb_croc_soc.sv
 
+  - target: ecp5
+    files:
+      - lattice/hw/croc_lattice.sv
+
   - target: genesys2
     files:
       - xilinx/hw/croc_xilinx.sv
