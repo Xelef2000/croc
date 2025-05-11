@@ -24,4 +24,3 @@ sources:
       # - fpga/tc_sram_xilinx.sv
       - tc_sram.sv
       - tc_sram_impl.sv
-      - tc_sram_impl.sv

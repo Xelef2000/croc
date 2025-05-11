@@ -55,7 +55,7 @@ if [ ${#VERILOG_FILES[@]} -gt 0 ]; then
 fi
 
 # Add synthesis command
-YOSYS_SCRIPT+="synth_ecp5 -top top -json _build/hardware.json"
+YOSYS_SCRIPT+="synth_ecp5 -top top -json _build/hardware.json plugin -i slang.so"
 
 # Run Yosys with the composed script
 yosys -q -p "$YOSYS_SCRIPT"

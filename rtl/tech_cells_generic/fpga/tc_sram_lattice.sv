@@ -14,31 +14,28 @@
 //              The behaviour, parameters and ports are described in the header of the original `rtl/tc_sram.sv`.
 
 module tc_sram #(
-  parameter int unsigned NumWords     = 32'd1024, // Number of Words in data array
-  parameter int unsigned DataWidth    = 32'd128,  // Data signal width (in bits)
-  parameter int unsigned ByteWidth    = 32'd8,    // Width of a data byte (in bits)
-  parameter int unsigned NumPorts     = 32'd2,    // Number of read and write ports
-  parameter int unsigned Latency      = 32'd1,    // Latency when the read data is available
-  parameter              SimInit      = "zeros",  // Simulation initialization
-  parameter bit          PrintSimCfg  = 1'b0,     // Print configuration
-  parameter              ImplKey      = "none",   // Reference to specific implementation
-  // DEPENDENT PARAMETERS, DO NOT OVERWRITE!
-  parameter int unsigned AddrWidth = (NumWords > 32'd1) ? $clog2(NumWords) : 32'd1,
-  parameter int unsigned BeWidth   = (DataWidth + ByteWidth - 32'd1) / ByteWidth, // ceil_div
-  parameter type         addr_t    = logic [AddrWidth-1:0],
-  parameter type         data_t    = logic [DataWidth-1:0],
-  parameter type         be_t      = logic [BeWidth-1:0]
+    parameter int unsigned NumWords = 32'd1024, // Number of Words in data array
+    parameter int unsigned DataWidth = 32'd128, // Data signal width
+    parameter int unsigned ByteWidth = 32'd8, // Width of a data byte
+    parameter int unsigned NumPorts = 32'd2, // Number of read and write ports
+    parameter int unsigned Latency = 32'd1, // Latency when the read data is available
+    parameter SimInit = "none", // Simulation initialization
+    parameter bit PrintSimCfg = 1'b0, // Print configuration
+    parameter ImplKey = "none", // Reference to specific implementation
+    // DEPENDENT PARAMETERS, DO NOT OVERWRITE!
+    parameter int unsigned AddrWidth = (NumWords > 32'd1) ? $clog2(NumWords) : 32'd1,
+    parameter int unsigned BeWidth = (DataWidth + ByteWidth - 32'd1) / ByteWidth // ceil_div
 ) (
-  input  logic                clk_i,      // Clock
-  input  logic                rst_ni,     // Asynchronous reset active low
-  // input ports
-  input  logic  [NumPorts-1:0] req_i,      // request
-  input  logic  [NumPorts-1:0] we_i,       // write enable
-  input  addr_t [NumPorts-1:0] addr_i,     // request address
-  input  data_t [NumPorts-1:0] wdata_i,    // write data
-  input  be_t   [NumPorts-1:0] be_i,       // write byte enable
-  // output ports
-  output data_t [NumPorts-1:0] rdata_o     // read data
+    input  logic clk_i,                         // Clock
+    input  logic rst_ni,                        // Asynchronous reset active low
+    // input ports
+    input  logic [NumPorts-1:0]                 req_i,   // request
+    input  logic [NumPorts-1:0]                 we_i,    // write enable
+    input  logic [NumPorts-1:0][AddrWidth-1:0]  addr_i,  // request address
+    input  logic [NumPorts-1:0][DataWidth-1:0]  wdata_i, // write data
+    input  logic [NumPorts-1:0][BeWidth-1:0]    be_i,    // write byte enable
+    // output ports
+    output logic [NumPorts-1:0][DataWidth-1:0]  rdata_o  // read data
 );
 
   // For ECP5, we need to adapt the design to use the EBR primitives
