@@ -27,8 +27,8 @@ module cc_onehot #(
   end else begin : gen_onehot
     localparam int LVLS = $clog2(Width) + 1;
 
-    logic [2**(LVLS-1)-1:0] sum [LVLS-1:0];
-    logic [2**(LVLS-1)-1:0] carry [LVLS-1:0];
+    logic [LVLS-1:0][2**(LVLS-1)-1:0] sum, carry;
+    logic [LVLS-2:0] carry_array;
 
     // Extend to a power of two.
     assign sum[0] = $unsigned(d_i);

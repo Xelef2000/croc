@@ -21,7 +21,7 @@ package cf_math_pkg;
     ///
     /// Returns the quotient of two natural numbers, rounded towards plus infinity.
     function automatic integer ceil_div (input longint dividend, input longint divisor);
-        longint remainder;
+        automatic longint remainder;
 
         `ifndef SYNTHESIS
         `ifndef COMMON_CELLS_ASSERTS_OFF
@@ -54,15 +54,8 @@ package cf_math_pkg;
     ///   `parameter type idx_t = logic[cf_math_pkg::idx_width(NumIdx)-1:0]`
     /// As typedef:
     ///   `typedef logic [cf_math_pkg::idx_width(NumIdx)-1:0] idx_t`
-    function integer idx_width;
-    input integer num_idx;
-    begin
-        if (num_idx > 1)
-        idx_width = $clog2(num_idx);
-        else
-        idx_width = 1;
-    end
+    function automatic integer unsigned idx_width (input integer unsigned num_idx);
+        return (num_idx > 32'd1) ? unsigned'($clog2(num_idx)) : 32'd1;
     endfunction
-
 
 endpackage

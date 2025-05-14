@@ -14,12 +14,12 @@ module credit_counter #(
   parameter bit          InitCreditEmpty = 1'b0,
   /// Derived parameters *Do not override*
   parameter int unsigned InitNumCredits  = InitCreditEmpty ? '0 : NumCredits,
-  // parameter type         credit_cnt_t    = logic [$clog2(NumCredits):0]
+  parameter type         credit_cnt_t    = logic [$clog2(NumCredits):0]
 ) (
   input  logic clk_i,
   input  logic rst_ni,
 
-  output logic [CREDIT_WIDTH-1:0] credit_o,
+  output credit_cnt_t credit_o,
 
   input  logic credit_give_i,
   input  logic credit_take_i,
@@ -30,10 +30,7 @@ module credit_counter #(
   output logic credit_full_o
 );
 
-  localparam int CREDIT_WIDTH = $clog2(NumCredits + 1);
-  localparam logic [CREDIT_WIDTH-1:0] INIT_CREDITS = InitCreditEmpty ? '0 : NumCredits;
-
-  logic [CREDIT_WIDTH-1:0] credit_d, credit_q;
+  credit_cnt_t credit_d, credit_q;
   logic increment, decrement;
 
   assign decrement = credit_take_i & ~credit_give_i;
