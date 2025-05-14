@@ -1,1 +1,2 @@
 bender script flist-plus -t fpga -t rtl -t genesys2 > croc.flist
+yosys -s run_yosys.ys
