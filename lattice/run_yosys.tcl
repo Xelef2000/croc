@@ -1,6 +1,7 @@
 plugin -i slang.so
 
-read_slang --top croc_chip -F ../croc.flist \
+
+read_slang --top croc_lattice -F ./croc.flist \
     --compat-mode --keep-hierarchy \
     --allow-use-before-declare --ignore-unknown-modules
 
@@ -21,4 +22,13 @@ setattr -set keep_hierarchy 1 "t:tc_sram_impl$*"
 setattr -set keep_hierarchy 1 "t:cdc_*$*"
 setattr -set keep_hierarchy 1 "t:sync$*"
 
-synth_ecp5 -top croc_chip -json _build/hardware.json
+
+hierarchy -top croc_lattice
+check
+proc
+opt_expr
+opt -noff
+fsm
+
+
+synth_ecp5 -top croc_lattice -json _build/hardware.json

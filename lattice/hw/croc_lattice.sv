@@ -9,11 +9,14 @@
 // Paul Scheffler <paulsc@iis.ee.ethz.ch>
 // Philippe Sauter <phsauter@iis.ee.ethz.ch>
 
-`include "croc_pkg.sv"  // if croc_pkg is a package, include the file manually
+`define ila(__name, __signal)  \
+  (* dont_touch = "yes" *) (* mark_debug = "true" *) logic [$bits(__signal)-1:0] __name; \
+  assign __name = __signal;
 
-module croc_xilinx #(
+
+module croc_lattice import croc_pkg::*; #(
   localparam int unsigned GpioCount = 4
-) (
+)  (
   input  logic  sys_clk_p,
 
 
@@ -57,6 +60,8 @@ module croc_xilinx #(
   //   .clk_20   ( soc_clk )
   // );
 
+  assign soc_clk = sys_clk;
+
   /////////////////////
   //  System Inputs  //
   /////////////////////
@@ -67,15 +72,15 @@ module croc_xilinx #(
 
 
   // Tie off inputs of no switches
-  logic                 fetch_en_i;
-  logic [GpioCount-2:0] gpio_i;
-  assign test_mode_i = '0;
-  assign fetch_en_i  = '0;
-  assign gpio_i      = '0;
+  // logic                 fetch_en_i;
+  // logic [GpioCount-2:0] gpio_i;
+  // assign test_mode_i = '0;
+  // assign fetch_en_i  = '0;
+  // assign gpio_i      = '0;
 
-  logic status_o;
+  // logic status_o;
 
-  logic [GpioCount-1:0] gpio_o;
+  // logic [GpioCount-1:0] gpio_o;
 
   ////////////
   //  VIOs  //
