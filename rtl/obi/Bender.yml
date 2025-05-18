@@ -27,5 +27,6 @@ sources:
   - obi_err_sbr.sv
   - obi_mux.sv
   - obi_sram_shim.sv
+  - obi_spi_ram_shim.sv
   # Level 4
   - obi_xbar.sv

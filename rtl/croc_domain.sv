@@ -393,6 +393,26 @@ module croc_domain import croc_pkg::*; #(
     assign bank_gnt = 1'b1;
   end
 
+  // SPI RAM
+   opi_spi_ram_shim #(
+    .ObiCfg    ( SbrObiCfg     ),
+    .obi_req_t ( sbr_obi_req_t ),
+    .obi_rsp_t ( sbr_obi_rsp_t ),
+    .BaseAddr ( SPIBaseAddr ),
+    .SpiRamMaxSize( SpiRamMaxSize)
+  ) i_spi_ram (
+    .clk_i,
+    .rst_ni,
+    .obi_req_i(xbar_spi_rom_obi_req),
+    .obi_rsp_o(xbar_spi_rom_obi_rsp),
+    .spi_address_o(spi_address_o),
+    .spi_data_o(spi_data_o),
+    .spi_cs_n_o(spi_cs_n_o),
+    .spi_md_o(spi_md_o),
+    .spi_rsp_i(spi_rsp_i),
+    .spi_data_i(spi_data_i)
+  );
+
 
   // Xbar space error subordinate
   obi_err_sbr #(
