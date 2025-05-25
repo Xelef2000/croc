@@ -58,18 +58,15 @@ module tc_clk_inverter (
 endmodule
 
 module tc_clk_mux2 (
-    input  logic clk0_i,
-    input  logic clk1_i,
-    input  logic clk_sel_i,
+    input logic clk0_i,
+    input logic clk1_i,
+    input logic clk_sel_i,
     output logic clk_o
 );
-    // ECP5 uses CLKMUX primitive for clock multiplexing
-    CLKMUX i_CLKMUX (
-        .CLKI0(clk0_i),
-        .CLKI1(clk1_i),
-        .SEL(clk_sel_i),
-        .CLKO(clk_o)
-    );
+
+// TODO: replace wit lattice specific mux
+assign clk_o = clk_sel_i ? clk1_i : clk0_i;
+
 endmodule
 
 module tc_clk_xor2 (

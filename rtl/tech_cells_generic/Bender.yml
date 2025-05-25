@@ -17,11 +17,19 @@ sources:
       # Level 0
       - tc_clk.sv
 
-  - target: all(any(fpga, tech_cells_generic_include_xilinx_xpm), not(tech_cells_generic_exclude_xilinx_xpm))
+  - target: all(any(fpga, tech_cells_generic_include_xilinx_xpm), not(any(tech_cells_generic_exclude_xilinx_xpm, ecp5)))
     files:
-      # - fpga/pad_functional_lattice.sv
-      # - fpga/tc_clk_lattice.sv
+      - fpga/pad_functional_lattice.sv
+      - fpga/tc_clk_lattice.sv
       # - fpga/tc_sram_lattice.sv
       - tc_sram.sv
       - tc_sram_impl.sv
+
+  - target: all(fpga, ecp5,  not(tech_cells_generic_include_xilinx_xpm))
+    files:
+      - fpga/pad_functional_lattice.sv
+      - fpga/tc_clk_lattice.sv
+      # - fpga/tc_sram_lattice.sv
+      - tc_sram.sv
       - tc_sram_impl.sv
+

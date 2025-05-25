@@ -3,7 +3,7 @@
 
 read_slang --top croc_lattice -F ./croc.flist \
     --compat-mode --keep-hierarchy \
-    --allow-use-before-declare --ignore-unknown-modules
+    --allow-use-before-declare
 
 setattr -set keep_hierarchy 1 "t:croc_soc$*"
 setattr -set keep_hierarchy 1 "t:croc_domain$*"
