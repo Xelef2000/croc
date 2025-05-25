@@ -1,7 +1,7 @@
 plugin -i slang.so
 
 
-read_slang --top croc_lattice -F ./croc.flist \
+read_slang --top croc_lattice -F ./_build/croc.flist \
     --compat-mode --keep-hierarchy \
     --allow-use-before-declare
 

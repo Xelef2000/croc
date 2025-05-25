@@ -40,3 +40,42 @@ LOCATE COMP "gpio_o[2]" SITE "D12";
 IOBUF PORT "gpio_o[2]" IO_TYPE=LVCMOS33;
 LOCATE COMP "gpio_o[3]" SITE "E10";
 IOBUF PORT "gpio_o[3]" IO_TYPE=LVCMOS33;
+
+#############
+# Timing Constraints (LPF format)
+#############
+
+# Input delay constraints for GPIO inputs
+# Min delay: 5ns (10% of 50ns SoC period), Max delay: 17.5ns (35% of 50ns)
+INPUT_DELAY PORT "gpio_i[0]" 5.0 ns 17.5 ns;
+INPUT_DELAY PORT "gpio_i[1]" 5.0 ns 17.5 ns;
+INPUT_DELAY PORT "gpio_i[2]" 5.0 ns 17.5 ns;
+INPUT_DELAY PORT "gpio_i[3]" 5.0 ns 17.5 ns;
+
+# Output delay constraints for GPIO outputs
+OUTPUT_DELAY PORT "gpio_o[0]" 5.0 ns 17.5 ns;
+OUTPUT_DELAY PORT "gpio_o[1]" 5.0 ns 17.5 ns;
+OUTPUT_DELAY PORT "gpio_o[2]" 5.0 ns 17.5 ns;
+OUTPUT_DELAY PORT "gpio_o[3]" 5.0 ns 17.5 ns;
+
+# Output delay for status LED
+OUTPUT_DELAY PORT "status_o" 5.0 ns 17.5 ns;
+
+# Max delay constraints (100ns = 2 * 50ns SoC period)
+MAXDELAY FROM PORT "gpio_i[0]" 100 ns;
+MAXDELAY FROM PORT "gpio_i[1]" 100 ns;
+MAXDELAY FROM PORT "gpio_i[2]" 100 ns;
+MAXDELAY FROM PORT "gpio_i[3]" 100 ns;
+
+MAXDELAY TO PORT "gpio_o[0]" 100 ns;
+MAXDELAY TO PORT "gpio_o[1]" 100 ns;
+MAXDELAY TO PORT "gpio_o[2]" 100 ns;
+MAXDELAY TO PORT "gpio_o[3]" 100 ns;
+
+MAXDELAY TO PORT "status_o" 100 ns;
+
+# JTAG timing constraints
+INPUT_DELAY PORT "jtag_tck_i" 2.0 ns 8.0 ns;
+INPUT_DELAY PORT "jtag_tms_i" 2.0 ns 8.0 ns;
+INPUT_DELAY PORT "jtag_tdi_i" 2.0 ns 8.0 ns;
+OUTPUT_DELAY PORT "jtag_tdo_o" 2.0 ns 8.0 ns;
