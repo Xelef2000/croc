@@ -1,0 +1,46 @@
+LOCATE      COMP "sys_clk_p"    SITE "P6";
+IOBUF       PORT "sys_clk_p"    IO_TYPE=LVCMOS33;
+FREQUENCY   PORT "sys_clk_p"    25 MHZ;
+
+LOCATE      COMP "uart_tx_o"       SITE "B9";   // iCELink-UART3-RX
+IOBUF       PORT "uart_tx_o"       IO_TYPE=LVCMOS33;
+
+LOCATE      COMP "uart_rx_i"       SITE "A9";
+IOBUF       PORT "uart_rx_i"       IO_TYPE=LVCMOS33;
+
+LOCATE COMP "status_o" SITE "B11";
+IOBUF PORT "status_o" IO_TYPE=LVCMOS33;
+
+
+LOCATE COMP "jtag_tck_i" SITE "F5";
+LOCATE COMP "jtag_tms_i" SITE "H5";
+LOCATE COMP "jtag_tdi_i" SITE "N4";
+LOCATE COMP "jtag_tdo_o" SITE "J5";
+
+
+IOBUF PORT "jtag_tck_i" IO_TYPE=LVCMOS33;
+IOBUF PORT "jtag_tms_i" IO_TYPE=LVCMOS33;
+IOBUF PORT "jtag_tdi_i" IO_TYPE=LVCMOS33;
+IOBUF PORT "jtag_tdo_o" IO_TYPE=LVCMOS33;
+
+# 4 gpio pins
+# gpio_i[0:3] are inputs
+LOCATE COMP "gpio_i[0]" SITE "A11";
+IOBUF PORT "gpio_i[0]" IO_TYPE=LVCMOS33;
+LOCATE COMP "gpio_i[1]" SITE "B10";
+IOBUF PORT "gpio_i[1]" IO_TYPE=LVCMOS33;
+LOCATE COMP "gpio_i[2]" SITE "B12";
+IOBUF PORT "gpio_i[2]" IO_TYPE=LVCMOS33;
+LOCATE COMP "gpio_i[3]" SITE "C10";
+IOBUF PORT "gpio_i[3]" IO_TYPE=LVCMOS33;
+# gpio_o[0:3] are outputs
+LOCATE COMP "gpio_o[0]" SITE "C11";
+IOBUF PORT "gpio_o[0]" IO_TYPE=LVCMOS33;
+LOCATE COMP "gpio_o[1]" SITE "D10";
+IOBUF PORT "gpio_o[1]" IO_TYPE=LVCMOS33;
+LOCATE COMP "gpio_o[2]" SITE "D12";
+IOBUF PORT "gpio_o[2]" IO_TYPE=LVCMOS33;
+LOCATE COMP "gpio_o[3]" SITE "E10";
+IOBUF PORT "gpio_o[3]" IO_TYPE=LVCMOS33;
+
+

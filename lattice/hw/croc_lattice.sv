@@ -20,11 +20,11 @@ module croc_lattice import croc_pkg::*; #(
   input  logic  sys_clk_p,
 
 
-  input  logic  sys_reset,
+  // input  logic  sys_reset,
 
 
 
-  input  logic fetch_en_i,             // switch 7
+  // input  logic fetch_en_i,             // switch 7
   input  logic [GpioCount-1:0] gpio_i, // switch 0-3
 
 
@@ -50,6 +50,12 @@ module croc_lattice import croc_pkg::*; #(
 
   wire sys_clk;
   wire soc_clk;
+
+  wire sys_reset;
+  assign sys_reset = 1'b0; // TODO: connect to reset button
+
+  wire fetch_en_i;
+  assign fetch_en_i = 1'b0; // TODO: connect to switch 7
 
 
   assign sys_clk = sys_clk_p;

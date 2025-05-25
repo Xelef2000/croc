@@ -1,0 +1,1 @@
+nextpnr-ecp5 --25k --package CABGA256 --speed 6 --json _build/hardware.json --textcfg _build/hardware.config --report _build/hardware.pnr --lpf constraints/iCESugar-Pro.lpf
