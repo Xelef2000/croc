@@ -1,4 +1,4 @@
-plugin -i slang.so
+#plugin -i slang.so
 
 
 read_slang --top croc_lattice -F ./croc.flist \
