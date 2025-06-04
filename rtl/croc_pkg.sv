@@ -67,7 +67,7 @@ package croc_pkg;
 
   localparam bit [31:0]   SpiRamBaseAddr    = 32'h1000_1000; // TODO: make dynamic
   localparam bit [31:0]   SpiRamMaxSize     = 32'h0040_0000;
-  localparam bit [31:0]   SpiRamAddrRange   = SpiRamMaxSize + 2*4; 
+  localparam bit [31:0]   SpiRamAddrRange   = SpiRamMaxSize + 3*4; 
 
 
 
