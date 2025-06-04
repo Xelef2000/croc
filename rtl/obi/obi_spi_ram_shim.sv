@@ -284,7 +284,7 @@ module obi_spi_ram_shim #(
                           (state_q == SPI_CFG) ? {24'b0, data_q[7:0]} : '0; // Opcode in address for config
     assign spi_data_o = (state_q == SPI_REQ) ? data_q : 
                        (state_q == SPI_CFG) ? {8'b0, data_q[31:8]} : '0; // Config data in upper 24 bits
-    assign spi_cs_n_o = (state_q == SPI_REQ || state_q == SPI_CFG) ? 1'b0 : 1'b1; // Active low chip select
+    assign spi_cs_n_o = (state_q == SPI_REQ || state_q == SPI_CFG) ? 1'b1 : 1'b0;
     assign spi_md_o = (state_q == SPI_REQ || state_q == SPI_CFG) ? spi_mode_q : '0;
     assign spi_we_o = (state_q == SPI_REQ) ? we_q : (state_q == SPI_CFG) ? 1'b1 : 1'b0; // Config is always write
 
