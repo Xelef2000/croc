@@ -7,9 +7,9 @@ module obi_spi_ram_shim #(
     parameter type obi_req_t = logic,
     /// The response struct.
     parameter type obi_rsp_t = logic,
-    /// Base address of the ROM
+    /// Base address of the RAM
     parameter logic [31:0] BaseAddr = 32'h1000_0000,
-    /// Size of ROM address range in bytes
+    /// Size of RAM address range in bytes
     parameter logic [31:0] SpiRamMaxSize = 32'h800
 ) (
     /// Clock
@@ -25,9 +25,14 @@ module obi_spi_ram_shim #(
     output [31:0] spi_data_o, // Data to SPI flash
     output logic spi_cs_n_o, // Chip select
     output [2:0] spi_md_o, // spi mode
+    output logic spi_we_o,  // Write enable to SPI module
     
     input logic spi_rsp_i, // SPI response
     input [31:0] spi_data_i, // Data from SPI flash
+
+    output logic clk_cfg_o, // Clock configuration output
+    output [4:0] clk_div_hi_o, // Clock divider high cycles
+    output [4:0] clk_div_lo_o, // Clock divider low cycles
 );
     // Define some registers to hold the requests fields
     logic req_d, req_q, req_qq; // Request valid (added req_qq for two-cycle delay for SPI response)
