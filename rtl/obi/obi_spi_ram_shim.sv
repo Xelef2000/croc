@@ -23,7 +23,7 @@ module obi_spi_ram_shim #(
     
     output [31:0] spi_address_o, // Address to SPI flash
     output [31:0] spi_data_o, // Data to SPI flash
-    output logic spi_cs_n_o, // Chip select
+    output logic spi_cs_o, // Chip select
     output [2:0] spi_md_o, // spi mode
     output logic spi_we_o,  // Write enable to SPI module
     output logic spi_cfg_o // SPI chip configuration mode

@@ -394,6 +394,24 @@ module croc_domain import croc_pkg::*; #(
   end
 
   // SPI RAM
+
+
+  logic [31:0] spi_address;
+  logic [31:0] spi_data;
+  logic spi_cs;
+  logic spi_md;
+  logic spi_we;
+  logic spi_cfg;
+
+  logic spi_rsp;
+  logic [31:0] spi_data;
+
+  logic clk_cfg;
+  logic [4:0] clk_div_hi;
+  logic [4:0] clk_div_lo;
+
+  logic spi_clk;
+
    opi_spi_ram_shim #(
     .ObiCfg    ( SbrObiCfg     ),
     .obi_req_t ( sbr_obi_req_t ),
@@ -405,12 +423,29 @@ module croc_domain import croc_pkg::*; #(
     .rst_ni,
     .obi_req_i(xbar_spi_rom_obi_req),
     .obi_rsp_o(xbar_spi_rom_obi_rsp),
-    .spi_address_o(spi_address_o),
-    .spi_data_o(spi_data_o),
-    .spi_cs_n_o(spi_cs_n_o),
-    .spi_md_o(spi_md_o),
-    .spi_rsp_i(spi_rsp_i),
-    .spi_data_i(spi_data_i)
+    .spi_address_o(spi_address),
+    .spi_data_o(spi_data),
+    .spi_cs_o(spi_cs),
+    .spi_md_o(spi_md),
+    .spi_we_o(spi_we),
+    .spi_cfg_o(spi_cfg),
+    .spi_rsp_i(spi_rsp),
+    .spi_data_i(spi_data),
+    .clk_cfg_o(clk_cfg),
+    .clk_div_hi_o(clk_div_hi),
+    .clk_div_lo_o(clk_div_lo)
+  );
+
+  spi_clk_gen #(
+    .InitialDivHigh ( 5'd1 ),
+    .InitialDivLow  ( 5'd1 )
+  ) i_spi_clk_gen (
+    .soc_clk_i     ( clk_i         ),
+    .rst_ni        ( rst_ni        ),
+    .clk_cfg_i     ( clk_cfg       ),
+    .clk_div_hi_i  ( clk_div_hi    ),
+    .clk_div_lo_i  ( clk_div_lo    ),
+    .spi_clk_o     ( spi_clk    )
   );
 
 
