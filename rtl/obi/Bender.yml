@@ -28,5 +28,6 @@ sources:
   - obi_mux.sv
   - obi_sram_shim.sv
   - obi_spi_ram_shim.sv
+  - spi_clk_gen.sv
   # Level 4
   - obi_xbar.sv
