@@ -26,15 +26,15 @@ module obi_spi_ram_shim #(
     output logic spi_cs_o, // Chip select
     output [2:0] spi_md_o, // spi mode
     output logic spi_we_o,  // Write enable to SPI module
-    output logic spi_cfg_o // SPI chip configuration mode
+    output logic spi_cfg_o, // SPI chip configuration mode
 
     
     input logic spi_rsp_i, // SPI response
-    input [31:0] spi_data_i, // Data from SPI flash
+    input [31:0] spi_resp_data_i, // Data from SPI flash
 
     output logic clk_cfg_o, // Clock configuration output
     output [4:0] clk_div_hi_o, // Clock divider high cycles
-    output [4:0] clk_div_lo_o, // Clock divider low cycles
+    output [4:0] clk_div_lo_o // Clock divider low cycles
 );
 
     // FSM states
@@ -96,7 +96,7 @@ module obi_spi_ram_shim #(
 
     // SPI response signals
     assign spi_rsp_d = spi_rsp_i;
-    assign spi_data_d = spi_data_i;
+    assign spi_data_d = spi_resp_data_i;
 
     // Timeout calculation
     assign timeout_limit = (clk_div_hi_q + clk_div_lo_q) * timeout_cycles_q;

@@ -404,7 +404,7 @@ module croc_domain import croc_pkg::*; #(
   logic spi_cfg;
 
   logic spi_rsp;
-  logic [31:0] spi_data;
+  logic [31:0] spi_resp_data;
 
   logic clk_cfg;
   logic [4:0] clk_div_hi;
@@ -412,11 +412,11 @@ module croc_domain import croc_pkg::*; #(
 
   logic spi_clk;
 
-   opi_spi_ram_shim #(
+   obi_spi_ram_shim #(
     .ObiCfg    ( SbrObiCfg     ),
     .obi_req_t ( sbr_obi_req_t ),
     .obi_rsp_t ( sbr_obi_rsp_t ),
-    .BaseAddr ( SPIBaseAddr ),
+    .BaseAddr ( SpiRamBaseAddr ),
     .SpiRamMaxSize( SpiRamMaxSize)
   ) i_spi_ram (
     .clk_i,
@@ -430,7 +430,7 @@ module croc_domain import croc_pkg::*; #(
     .spi_we_o(spi_we),
     .spi_cfg_o(spi_cfg),
     .spi_rsp_i(spi_rsp),
-    .spi_data_i(spi_data),
+    .spi_resp_data_i(spi_resp_data),
     .clk_cfg_o(clk_cfg),
     .clk_div_hi_o(clk_div_hi),
     .clk_div_lo_o(clk_div_lo)
