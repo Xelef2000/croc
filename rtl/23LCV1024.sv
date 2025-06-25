@@ -75,7 +75,7 @@
 // *******************************************************************************************************
 
 
-`timescale 1ns/10ps
+// `timescale 1ns/10ps // comment out to reduce warnings
 
 module M23LCV1024 (SI_SIO0, SO_SIO1, SCK, CS_N, VCC, VBAT, RESET);  
   
