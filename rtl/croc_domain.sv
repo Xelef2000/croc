@@ -480,6 +480,8 @@ module croc_domain import croc_pkg::*; #(
     .rdata_o       ( spi_resp_data)
   );
 
+  assign spi_ram_sck_o = spi_clk;
+
 
 
 
