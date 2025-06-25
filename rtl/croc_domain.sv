@@ -463,6 +463,26 @@ module croc_domain import croc_pkg::*; #(
   );
 
 
+  spi_manager i_spi_manager (
+    .clk_i         ( clk_i         ),
+    .rst_ni        ( rst_ni        ),
+    .start_i       ( spi_cs ),
+    .we_i          ( spi_we  ),
+    .addr_i        ( spi_address   ),
+    .wdata_i       ( spi_data      ),
+
+    .spi_clk_i     ( spi_clk       ),
+    .miso_i        ( spi_ram_miso_i ),
+    .mosi_o       ( spi_ram_mosi_o ),
+    .cs_n_o       ( spi_ram_cs_o   ),
+
+    .rsp_valid_o   ( spi_rsp),
+    .rdata_o       ( spi_resp_data)
+  );
+
+
+
+
   // Xbar space error subordinate
   obi_err_sbr #(
     .ObiCfg      ( SbrObiCfg     ),
