@@ -24,6 +24,11 @@ module croc_soc import croc_pkg::*; #(
   input  logic uart_rx_i,
   output logic uart_tx_o,
 
+  input  logic spi_ram_miso_i,
+  output logic spi_ram_mosi_o,
+  output logic spi_ram_sck_o,
+  output logic spi_ram_cs_o,
+
   input  logic [GpioCount-1:0] gpio_i,       // Input from GPIO pins
   output logic [GpioCount-1:0] gpio_o,       // Output to GPIO pins
   output logic [GpioCount-1:0] gpio_out_en_o // Output enable signal; 0 -> input, 1 -> output
@@ -77,6 +82,11 @@ croc_domain #(
 
   .uart_rx_i,
   .uart_tx_o,
+
+  .spi_ram_miso_i,
+  .spi_ram_mosi_o,
+  .spi_ram_sck_o,
+  .spi_ram_cs_o,
 
   .gpio_i,             
   .gpio_o,            
