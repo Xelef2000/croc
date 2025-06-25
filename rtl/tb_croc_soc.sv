@@ -93,6 +93,49 @@ module tb_croc_soc #(
     );
 
 
+    //////////////
+    // SPI RAM  //
+    //////////////
+    logic spi_ram_cs_n;
+    logic spi_ram_clk;
+    logic spi_ram_mosi;
+    logic spi_ram_miso;
+
+    logic spi_ram_vcc;
+    logic spi_ram_vbat;
+    logic spi_ram_reset;
+
+    // Declare as tri-state-capable signals:
+    logic spi_ram_sio0_t; // tristate control
+    logic spi_ram_sio0_i; // input from SRAM
+    logic spi_ram_sio0_o; // output to SRAM
+    logic spi_ram_sio1; 
+
+
+    assign spi_ram_sio0 = spi_ram_sio0_t ? 1'bz : spi_ram_sio0_o;
+    assign spi_ram_sio0_i = spi_ram_sio0;
+
+    assign spi_ram_miso = spi_ram_sio1;
+
+    assign spi_ram_vcc  = 1'b1; // Power on
+    assign spi_ram_vbat = 1'b1; // Power on
+    assign spi_ram_reset = !rst_n; 
+
+    // module M23LCV1024 (SI_SIO0, SO_SIO1, SCK, CS_N, VCC, VBAT, RESET);  
+
+    M23LCV1024 i_spi_ram (
+        .SI_SIO0 ( spi_ram_sio0 ),
+        .SO_SIO1 ( spi_ram_sio1 ),
+        .SCK     ( spi_ram_clk  ),
+        .CS_N    ( spi_ram_cs_n ),
+        .VCC     ( spi_ram_vcc  ),
+        .VBAT    ( spi_ram_vbat ),
+        .RESET   ( spi_ram_reset )
+    );
+
+    
+
+
     ////////////
     //  JTAG  //
     ////////////
