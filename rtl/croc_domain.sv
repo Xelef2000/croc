@@ -109,6 +109,10 @@ module croc_domain import croc_pkg::*; #(
   sbr_obi_req_t [NumSramBanks-1:0] xbar_mem_bank_obi_req;
   sbr_obi_rsp_t [NumSramBanks-1:0] xbar_mem_bank_obi_rsp;
 
+  // spi mem
+  sbr_obi_req_t xbar_spi_mem_obi_req;
+  sbr_obi_rsp_t xbar_spi_mem_obi_rsp;
+
   // periph bus
   sbr_obi_req_t xbar_periph_obi_req;
   sbr_obi_rsp_t xbar_periph_obi_rsp;
@@ -127,6 +131,10 @@ module croc_domain import croc_pkg::*; #(
     assign xbar_mem_bank_obi_req[i]     = all_sbr_obi_req[XbarBank0+i];
     assign all_sbr_obi_rsp[XbarBank0+i] = xbar_mem_bank_obi_rsp[i];
   end
+
+  assign xbar_spi_mem_obi_req          = all_sbr_obi_req[XbarSPI];
+  assign all_sbr_obi_rsp[XbarSPI]      = xbar_spi_mem_obi_rsp;
+
 
   assign user_sbr_obi_req_o          = all_sbr_obi_req[XbarUser];
   assign all_sbr_obi_rsp[XbarUser]   = user_sbr_obi_rsp_i;
@@ -427,8 +435,8 @@ module croc_domain import croc_pkg::*; #(
   ) i_spi_ram (
     .clk_i,
     .rst_ni,
-    .obi_req_i(xbar_spi_rom_obi_req),
-    .obi_rsp_o(xbar_spi_rom_obi_rsp),
+    .obi_req_i( xbar_spi_mem_obi_req ), 
+    .obi_rsp_o( xbar_spi_mem_obi_rsp ),
     .spi_address_o(spi_address),
     .spi_data_o(spi_data),
     .spi_cs_o(spi_cs),

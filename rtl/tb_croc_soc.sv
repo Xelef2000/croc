@@ -105,15 +105,12 @@ module tb_croc_soc #(
     logic spi_ram_vbat;
     logic spi_ram_reset;
 
-    // Declare as tri-state-capable signals:
-    logic spi_ram_sio0_t; // tristate control
-    logic spi_ram_sio0_i; // input from SRAM
-    logic spi_ram_sio0_o; // output to SRAM
+
+    logic spi_ram_sio0;
     logic spi_ram_sio1; 
 
 
-    assign spi_ram_sio0 = spi_ram_sio0_t ? 1'bz : spi_ram_sio0_o;
-    assign spi_ram_sio0_i = spi_ram_sio0;
+    assign spi_ram_sio0 = spi_ram_mosi;
 
     assign spi_ram_miso = spi_ram_sio1;
 
@@ -465,6 +462,11 @@ module tb_croc_soc #(
 
         .uart_rx_i     ( uart_rx_i ),
         .uart_tx_o     ( uart_tx_o ),
+
+        .spi_ram_miso_i( spi_ram_miso ),
+        .spi_ram_mosi_o( spi_ram_mosi ),
+        .spi_ram_sck_o ( spi_ram_clk  ),
+        .spi_ram_cs_o  ( spi_ram_cs_n ),
 
         .gpio_i        ( gpio_i        ),             
         .gpio_o        ( gpio_o        ),            
