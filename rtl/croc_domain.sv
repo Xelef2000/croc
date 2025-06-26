@@ -432,7 +432,7 @@ module croc_domain import croc_pkg::*; #(
     .obi_rsp_t ( sbr_obi_rsp_t ),
     .BaseAddr ( SpiRamBaseAddr ),
     .SpiRamMaxSize( SpiRamMaxSize)
-  ) i_spi_ram (
+   ) i_spi_ram_shim (
     .clk_i,
     .rst_ni,
     .obi_req_i( xbar_spi_mem_obi_req ), 
@@ -449,6 +449,7 @@ module croc_domain import croc_pkg::*; #(
     .clk_div_hi_o(clk_div_hi),
     .clk_div_lo_o(clk_div_lo)
   );
+
 
   spi_clk_gen #(
     .InitialDivHigh ( 5'd1 ),

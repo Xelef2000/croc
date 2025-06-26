@@ -1,8 +1,8 @@
 module spi_clk_gen #(
     /// Initial divider value for high cycles
-    parameter logic [4:0] InitialDivHigh = 5'd1,
+    parameter logic [4:0] InitialDivHigh = 5'd4,
     /// Initial divider value for low cycles  
-    parameter logic [4:0] InitialDivLow = 5'd1
+    parameter logic [4:0] InitialDivLow = 5'd4
 ) (
     /// Clock
     input logic soc_clk_i,
