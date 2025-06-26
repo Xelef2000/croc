@@ -88,7 +88,7 @@ module obi_spi_ram_shim #(
     logic config_mem_size_comb, config_params_comb;
 
     assign memory_request_comb = (obi_req_i.a.addr >= BaseAddr) && 
-                                (obi_req_i.a.addr < BaseAddr + SpiRamMaxSize);
+                                (obi_req_i.a.addr < BaseAddr + spi_ram_size_q);
     
     assign config_request_comb = (obi_req_i.a.addr >= BaseAddr + SpiRamMaxSize) && 
                                 (obi_req_i.a.addr < BaseAddr + SpiRamMaxSize + 8);
