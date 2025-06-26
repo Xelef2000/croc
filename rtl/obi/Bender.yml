@@ -27,6 +27,7 @@ sources:
   - obi_err_sbr.sv
   - obi_mux.sv
   - obi_sram_shim.sv
+  - obi_spi_rom.sv
   - obi_spi_ram_shim.sv
   - spi_clk_gen.sv
   - spi_manager.sv

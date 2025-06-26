@@ -63,6 +63,13 @@ module obi_spi_ram_shim #(
     logic [ObiCfg.IdWidth-1:0] id_d, id_q;
     logic [ObiCfg.DataWidth-1:0] data_d, data_q;
 
+    // Pipelined request type registers
+    logic memory_request_d, memory_request_q;
+    logic config_request_d, config_request_q;
+    logic spi_cfg_request_d, spi_cfg_request_q;
+    logic config_mem_size_d, config_mem_size_q;
+    logic config_params_d, config_params_q;
+
     // Response registers
     logic [ObiCfg.DataWidth-1:0] rsp_data_d, rsp_data_q;
     logic rsp_err_d, rsp_err_q;
@@ -76,23 +83,23 @@ module obi_spi_ram_shim #(
     logic [15:0] timeout_counter_d, timeout_counter_q;
     logic [15:0] timeout_limit;
 
-    // Address decoding
-    logic memory_request, config_request, spi_cfg_request, addr_in_range;
-    logic config_mem_size, config_params;
+    // Address decoding (combinational)
+    logic memory_request_comb, config_request_comb, spi_cfg_request_comb, addr_in_range;
+    logic config_mem_size_comb, config_params_comb;
 
-    assign memory_request = (obi_req_i.a.addr >= BaseAddr) && 
-                           (obi_req_i.a.addr < BaseAddr + SpiRamMaxSize);
+    assign memory_request_comb = (obi_req_i.a.addr >= BaseAddr) && 
+                                (obi_req_i.a.addr < BaseAddr + SpiRamMaxSize);
     
-    assign config_request = (obi_req_i.a.addr >= BaseAddr + SpiRamMaxSize) && 
-                           (obi_req_i.a.addr < BaseAddr + SpiRamMaxSize + 8);
+    assign config_request_comb = (obi_req_i.a.addr >= BaseAddr + SpiRamMaxSize) && 
+                                (obi_req_i.a.addr < BaseAddr + SpiRamMaxSize + 8);
     
-    assign spi_cfg_request = (obi_req_i.a.addr >= BaseAddr + SpiRamMaxSize + 8) && 
-                            (obi_req_i.a.addr < BaseAddr + SpiRamMaxSize + 12);
+    assign spi_cfg_request_comb = (obi_req_i.a.addr >= BaseAddr + SpiRamMaxSize + 8) && 
+                                 (obi_req_i.a.addr < BaseAddr + SpiRamMaxSize + 12);
     
-    assign addr_in_range = memory_request || config_request || spi_cfg_request;
+    assign addr_in_range = memory_request_comb || config_request_comb || spi_cfg_request_comb;
     
-    assign config_mem_size = config_request && (obi_req_i.a.addr == BaseAddr + SpiRamMaxSize);
-    assign config_params = config_request && (obi_req_i.a.addr == BaseAddr + SpiRamMaxSize + 4);
+    assign config_mem_size_comb = config_request_comb && (obi_req_i.a.addr == BaseAddr + SpiRamMaxSize);
+    assign config_params_comb = config_request_comb && (obi_req_i.a.addr == BaseAddr + SpiRamMaxSize + 4);
 
     // SPI response signals
     assign spi_rsp_d = spi_rsp_i;
@@ -101,12 +108,19 @@ module obi_spi_ram_shim #(
     // Timeout calculation
     assign timeout_limit = (clk_div_hi_q + clk_div_lo_q) * timeout_cycles_q;
 
-    // Sample request when granted
+    // Sample request and request type when granted
     assign req_d = obi_req_i.req && addr_in_range && (state_q == BASE);
-    assign id_d = obi_req_i.a.aid;
-    assign we_d = obi_req_i.a.we;
-    assign addr_d = obi_req_i.a.addr;
-    assign data_d = obi_req_i.a.wdata;
+    assign id_d = req_d ? obi_req_i.a.aid : id_q;
+    assign we_d = req_d ? obi_req_i.a.we : we_q;
+    assign addr_d = req_d ? obi_req_i.a.addr : addr_q;
+    assign data_d = req_d ? obi_req_i.a.wdata : data_q;
+    
+    // Pipeline request type signals
+    assign memory_request_d = memory_request_comb && req_d;
+    assign config_request_d = config_request_comb && req_d;
+    assign spi_cfg_request_d = spi_cfg_request_comb && req_d;
+    assign config_mem_size_d = config_mem_size_comb && req_d;
+    assign config_params_d = config_params_comb && req_d;
 
     // FSM logic
     always_comb begin
@@ -126,12 +140,12 @@ module obi_spi_ram_shim #(
             BASE: begin
                 rsp_valid_d = 1'b0;
                 if (req_q) begin
-                    if (config_request) begin
+                    if (config_request_q) begin
                         if (we_q) begin
                             // Handle configuration writes
-                            if (config_mem_size) begin
+                            if (config_mem_size_q) begin
                                 spi_ram_size_d = data_q;
-                            end else if (config_params) begin
+                            end else if (config_params_q) begin
                                 clk_div_hi_d = data_q[4:0];
                                 clk_div_lo_d = data_q[9:5];
                                 spi_mode_d = data_q[12:10];
@@ -144,15 +158,15 @@ module obi_spi_ram_shim #(
                             end
                         end else begin
                             // Handle configuration reads
-                            if (config_mem_size) begin
+                            if (config_mem_size_q) begin
                                 rsp_data_d = spi_ram_size_q;
-                            end else if (config_params) begin
+                            end else if (config_params_q) begin
                                 rsp_data_d = {9'b0, timeout_cycles_q, spi_mode_q, clk_div_lo_q, clk_div_hi_q};
                             end
                             rsp_valid_d = 1'b1;
                             rsp_err_d = 1'b0;
                         end
-                    end else if (spi_cfg_request) begin
+                    end else if (spi_cfg_request_q) begin
                         if (we_q) begin
                             // Start SPI chip configuration
                             state_d = SPI_CFG;
@@ -163,7 +177,7 @@ module obi_spi_ram_shim #(
                             rsp_err_d = 1'b1;
                             rsp_data_d = '0;
                         end
-                    end else if (memory_request) begin
+                    end else if (memory_request_q) begin
                         // Start SPI transaction
                         state_d = SPI_REQ;
                         timeout_counter_d = '0;
@@ -237,6 +251,11 @@ module obi_spi_ram_shim #(
             we_q <= '0;
             addr_q <= '0;
             data_q <= '0;
+            memory_request_q <= '0;
+            config_request_q <= '0;
+            spi_cfg_request_q <= '0;
+            config_mem_size_q <= '0;
+            config_params_q <= '0;
             rsp_data_q <= '0;
             rsp_err_q <= '0;
             rsp_valid_q <= '0;
@@ -256,6 +275,11 @@ module obi_spi_ram_shim #(
             we_q <= we_d;
             addr_q <= addr_d;
             data_q <= data_d;
+            memory_request_q <= memory_request_d;
+            config_request_q <= config_request_d;
+            spi_cfg_request_q <= spi_cfg_request_d;
+            config_mem_size_q <= config_mem_size_d;
+            config_params_q <= config_params_d;
             rsp_data_q <= rsp_data_d;
             rsp_err_q <= rsp_err_d;
             rsp_valid_q <= rsp_valid_d;
@@ -284,7 +308,7 @@ module obi_spi_ram_shim #(
                           (state_q == SPI_CFG) ? {24'b0, data_q[7:0]} : '0; // Opcode in address for config
     assign spi_data_o = (state_q == SPI_REQ) ? data_q : 
                        (state_q == SPI_CFG) ? {8'b0, data_q[31:8]} : '0; // Config data in upper 24 bits
-    assign spi_cs_o = (state_q == SPI_REQ || state_q == SPI_CFG) ? 1'b1 : 1'b0;
+    assign spi_cs_o = (state_q == SPI_REQ || state_q == SPI_CFG);
     assign spi_md_o = (state_q == SPI_REQ || state_q == SPI_CFG) ? spi_mode_q : '0;
     assign spi_we_o = (state_q == SPI_REQ) ? we_q : (state_q == SPI_CFG) ? 1'b1 : 1'b0; // Config is always write
 
