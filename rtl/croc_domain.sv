@@ -450,19 +450,6 @@ module croc_domain import croc_pkg::*; #(
     .clk_div_lo_o(clk_div_lo)
   );
 
-  // obi_spi_rom #(
-  //   .ObiCfg    ( SbrObiCfg     ),
-  //   .obi_req_t ( sbr_obi_req_t ),
-  //   .obi_rsp_t ( sbr_obi_rsp_t ),
-  //   .BaseAddr (SpiRamBaseAddr),
-  //   .Size(SpiRamAddrRange)
-  // ) i_spi_rom (
-  //   .clk_i,
-  //   .rst_ni,
-  //   .obi_req_i(xbar_spi_mem_obi_req),
-  //   .obi_rsp_o(xbar_spi_mem_obi_rsp)
-  // );
-
 
   spi_clk_gen #(
     .InitialDivHigh ( 5'd1 ),

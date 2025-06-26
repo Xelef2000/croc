@@ -40,7 +40,7 @@ int main() {
     printf("About to access address 0x10001000\n");
     uart_write_flush();
     
-    volatile uint32_t* ram_ptr = (volatile uint32_t*)0x10001016;
+    volatile uint32_t* ram_ptr = (volatile uint32_t*)0x10001004;
     printf("pointer created\n");
     uart_write_flush();
     
@@ -48,13 +48,15 @@ int main() {
     for(volatile int i=0; i<1000; i++) { asm("nop"); }
 
     // Write 
-    *ram_ptr = 0xDEADBEEF; 
+    *ram_ptr = 0x12345678;
+    // printf("write successful!\n");
 
     // Try the actual read
-    uint32_t ram_val = *ram_ptr;
+    volatile uint32_t ram_val = *ram_ptr;
     
     // If we get here, print the value
     printf("read successful! Value: 0x%x\n", ram_val);
+
     uart_write_flush();
     
     // Rest of your program...
