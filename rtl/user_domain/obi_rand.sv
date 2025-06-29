@@ -33,8 +33,13 @@ module obi_rand #(
     logic set_seed_d, set_seed_q;
     logic [31:0] seed_value_d, seed_value_q;
     
-    // Address decode signals
+    // Address decode signals (combinatorial and pipelined)
     logic addr_is_prng0, addr_is_prng1;
+    logic addr_is_prng0_d, addr_is_prng0_q;
+    logic addr_is_prng1_d, addr_is_prng1_q;
+
+    // Individual seed control signals for each PRNG
+    logic set_seed_prng0, set_seed_prng1;
 
     // Check if address is in range
     logic addr_in_range;
@@ -44,6 +49,9 @@ module obi_rand #(
     // Address decode for the two PRNG instances
     assign addr_is_prng0 = (obi_req_i.a.addr == BaseAddr);           // First 32 bits (offset 0x0)
     assign addr_is_prng1 = (obi_req_i.a.addr == (BaseAddr + 32'h4)); // Next 32 bits (offset 0x4)
+
+    assign addr_is_prng0_d = addr_is_prng0;
+    assign addr_is_prng1_d = addr_is_prng1;
 
     // Wire the registers holding the request - only when address is in range
     assign req_d = obi_req_i.req && addr_in_range;
@@ -67,14 +75,18 @@ module obi_rand #(
     assign set_seed_d = req_d && we_d && (addr_is_prng0 || addr_is_prng1);
     assign seed_value_d = data_d;       // Use write data as seed value
 
+    // Individual seed control for each PRNG
+    assign set_seed_prng0 = set_seed_q && addr_is_prng0_q;
+    assign set_seed_prng1 = set_seed_q && addr_is_prng1_q;
+
     // First PRNG instance
     prand #(
         .Seed(32'h1A2B3C4D) 
     ) i_prand_0 (
         .clk_i(clk_i),
         .rst_ni(rst_ni),
-        .set_seed_i(set_seed_q),        // Connect seed control
-        .seed_i(seed_value_q),          // Connect seed value
+        .set_seed_i(set_seed_prng0),
+        .seed_i(seed_value_q),
         .random_number_o(random_number_0)
     );
 
@@ -84,8 +96,8 @@ module obi_rand #(
     ) i_prand_1 (
         .clk_i(clk_i),
         .rst_ni(rst_ni),
-        .set_seed_i(set_seed_q),        // Connect seed control
-        .seed_i(seed_value_q),          // Connect seed value
+        .set_seed_i(set_seed_prng1),
+        .seed_i(seed_value_q),
         .random_number_o(random_number_1)
     );
 
@@ -116,6 +128,8 @@ module obi_rand #(
             resp_data_q <= '0;
             set_seed_q <= '0;
             seed_value_q <= '0;
+            addr_is_prng0_q <= '0;
+            addr_is_prng1_q <= '0;
         end else begin
             req_q <= req_d;
             id_q <= id_d;
@@ -125,6 +139,8 @@ module obi_rand #(
             resp_data_q <= resp_data_d;
             set_seed_q <= set_seed_d;
             seed_value_q <= seed_value_d;
+            addr_is_prng0_q <= addr_is_prng0_d;
+            addr_is_prng1_q <= addr_is_prng1_d;
         end
     end
 
