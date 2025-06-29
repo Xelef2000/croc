@@ -83,7 +83,7 @@ int main() {
     uint32_t random_val = *random_ptr;
     printf("Random value read from 0x20000000: 0x%x\n", random_val);
 
-    random_ptr = (volatile uint32_t*)0x20000004; // Pointer to RAM address
+    random_ptr = (volatile uint32_t*)0x20000008; // Pointer to RAM address
     printf("pointer created\n");
     uart_write_flush();
     
@@ -92,9 +92,10 @@ int main() {
 
     seed = 0x600;
     // Write the seed to the random number generator
-    *random_ptr = seed; // Write the seed to the address 0x200000
+    // *random_ptr = seed; // Write the seed to the address 0x200000
     random_val = *random_ptr;
     printf("Random value read from 0x20000004: 0x%x\n", random_val);
+    
 
 
     uart_write_flush();

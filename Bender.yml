@@ -47,6 +47,8 @@ sources:
       - rtl/user_domain.sv
       - rtl/user_domain/obi_rand.sv
       - rtl/user_domain/prand.sv
+      - rtl/user_domain/metastable_trng.sv
+      - rtl/user_domain/trand.sv
       # add your design files with modules here
       # Level 3
       - rtl/croc_soc.sv
