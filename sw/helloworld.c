@@ -73,18 +73,26 @@ int main() {
     // Add a delay to ensure UART output completes
     for(volatile int i=0; i<1000; i++) { asm("nop"); }
 
+    uint32_t seed = 0x600;
+    // Write the seed to the random number generator
+    *random_ptr = seed; // Write the seed to the address 0x200000
+    uint32_t random_val = *random_ptr;
+    printf("Random value read from 0x20000000: 0x%x\n", random_val);
+    uart_write_flush();
+
+
    
-    // read value 10 times
-    for (int i = 0; i < 10; i++) {
-        // Try the actual read
-        uint32_t random_val = *random_ptr;
+    // // read value 10 times
+    // for (int i = 0; i < 10; i++) {
+    //     // Try the actual read
+    //     uint32_t random_val = *random_ptr;
         
-        // If we get here, print the value
-        printf("read successful! Value: 0x%x\n", random_val);
-        uart_write_flush();
-        // Add a delay to ensure UART output completes
-        for(volatile int j=0; j<33; j++) { asm("nop"); }
-    }
+    //     // If we get here, print the value
+    //     printf("read successful! Value: 0x%x\n", random_val);
+    //     uart_write_flush();
+    //     // Add a delay to ensure UART output completes
+    //     for(volatile int j=0; j<33; j++) { asm("nop"); }
+    // }
 
 
 

@@ -1,15 +1,15 @@
 `include "common_cells/registers.svh"
 
-module obi_ram #(
+module obi_rand #(
     /// The OBI configuration for all ports.
     parameter obi_pkg::obi_cfg_t ObiCfg = obi_pkg::ObiDefaultConfig,
     /// The request struct.
     parameter type obi_req_t = logic,
     /// The response struct.
     parameter type obi_rsp_t = logic,
-    /// Base address of the ROM
+    /// Base address of the Module
     parameter logic [31:0] BaseAddr = 32'h1000_0000,
-    /// Size of ROM address range in bytes
+    /// Size of address range in bytes
     parameter logic [31:0] Size = 32'h800
 ) (
     /// Clock
@@ -22,19 +22,21 @@ module obi_ram #(
     output obi_rsp_t obi_rsp_o
 );
     // Define some registers to hold the requests fields
-    logic req_d, req_q; // Request valid (added req_qq for two-cycle delay for SPI response)
+    logic req_d, req_q; // Request valid
     logic we_d, we_q;    // Write enable
     logic [ObiCfg.AddrWidth-1:0] addr_d, addr_q; // Internal address of the word to read
     logic [ObiCfg.IdWidth-1:0] id_d, id_q; // Id of the request, must be same for the response
     logic [ObiCfg.DataWidth-1:0] data_d, data_q; // Data to be written (for write requests)
     logic [ObiCfg.DataWidth-1:0] random_number, resp_data_d, resp_data_q; // Data to be returned in response
 
+    // Seed control signals
+    logic set_seed_d, set_seed_q;
+    logic [31:0] seed_value_d, seed_value_q;
+
     // Check if address is in range
     logic addr_in_range;
     assign addr_in_range = (obi_req_i.a.addr >= BaseAddr) && 
                            (obi_req_i.a.addr < (BaseAddr + Size));
-
-    
 
     // Wire the registers holding the request - only when address is in range
     assign req_d = obi_req_i.req && addr_in_range;
@@ -44,15 +46,19 @@ module obi_ram #(
     assign data_d = obi_req_i.a.wdata;
     assign resp_data_d = random_number; 
 
+    // Seed control logic - set seed when write is detected
+    assign set_seed_d = req_d && we_d;  // Set seed on write request
+    assign seed_value_d = data_d;       // Use write data as seed value
+
     prand #(
         .Seed(32'h1A2B3C4D) 
     ) i_prand (
         .clk_i(clk_i),
         .rst_ni(rst_ni),
+        .set_seed_i(set_seed_q),        // Connect seed control
+        .seed_i(seed_value_q),          // Connect seed value
         .random_number_o(random_number)
     );
-
-
 
     always_comb begin
         rsp_data = '0;
@@ -60,18 +66,16 @@ module obi_ram #(
         
         if(req_q) begin
             if(we_q) begin
-                // Write request
+                // Write request - seed was set, return success
                 rsp_data = '0; // No data to return on write
                 rsp_err = '0; // No error
             end else begin
-                // Read request
+                // Read request - return random number
                 rsp_data = resp_data_q;
                 rsp_err = '0; // No error
             end
         end
     end
-
-
 
     always_ff @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni) begin
@@ -81,6 +85,8 @@ module obi_ram #(
             addr_q <= '0;
             data_q <= '0;
             resp_data_q <= '0;
+            set_seed_q <= '0;
+            seed_value_q <= '0;
         end else begin
             req_q <= req_d;
             id_q <= id_d;
@@ -88,6 +94,8 @@ module obi_ram #(
             addr_q <= addr_d;
             data_q <= data_d;
             resp_data_q <= resp_data_d;
+            set_seed_q <= set_seed_d;
+            seed_value_q <= seed_value_d;
         end
     end
 
@@ -95,8 +103,6 @@ module obi_ram #(
     logic [ObiCfg.DataWidth-1:0] rsp_data; // Data field of the obi response
     logic rsp_err; // Error field of the obi response
 
-
-    
     // Wire the response
     // A channel
     assign obi_rsp_o.gnt = obi_req_i.req && addr_in_range;

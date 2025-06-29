@@ -1,4 +1,3 @@
-
 module prand #(
     /// Seed value for the pseudo-random number generator
     parameter logic [31:0] Seed = 32'h800
@@ -7,6 +6,10 @@ module prand #(
     input logic clk_i,
     /// Active-low reset
     input logic rst_ni,
+    /// Set seed control signal
+    input logic set_seed_i,
+    /// Seed input value
+    input logic [31:0] seed_i,
     // random number output
     output logic [31:0] random_number_o
 );
@@ -77,21 +80,31 @@ module prand #(
         output_ready_d = output_ready_q;
         random_output_d = random_output_q;
 
-        // Always shift LFSR (shift left, insert feedback at LSB)
-        lfsr_d = {lfsr_q[29:0], lfsr_feedback};
-
-        // Accumulate filtered bits
-        if (bit_counter_q < 5'd31) begin
-            // Shift in new filtered bit
-            accumulator_d = {accumulator_q[30:0], filtered_bit};
-            bit_counter_d = bit_counter_q + 1'b1;
+        // Check if seed should be loaded
+        if (set_seed_i) begin
+            // Load new seed (ensure non-zero)
+            lfsr_d = (seed_i[30:0] == 31'b0) ? 31'h1 : seed_i[30:0];
+            // Reset accumulator and counter when new seed is set
+            accumulator_d = '0;
+            bit_counter_d = 5'd0;
             output_ready_d = 1'b0;
         end else begin
-            // 32 bits accumulated, output is ready
-            accumulator_d = {accumulator_q[30:0], filtered_bit};
-            random_output_d = {accumulator_q[30:0], filtered_bit};
-            bit_counter_d = 5'd0;  // Reset counter
-            output_ready_d = 1'b1;
+            // Normal operation - always shift LFSR (shift left, insert feedback at LSB)
+            lfsr_d = {lfsr_q[29:0], lfsr_feedback};
+
+            // Accumulate filtered bits
+            if (bit_counter_q < 5'd31) begin
+                // Shift in new filtered bit
+                accumulator_d = {accumulator_q[30:0], filtered_bit};
+                bit_counter_d = bit_counter_q + 1'b1;
+                output_ready_d = 1'b0;
+            end else begin
+                // 32 bits accumulated, output is ready
+                accumulator_d = {accumulator_q[30:0], filtered_bit};
+                random_output_d = {accumulator_q[30:0], filtered_bit};
+                bit_counter_d = 5'd0;  // Reset counter
+                output_ready_d = 1'b1;
+            end
         end
     end
 

@@ -106,14 +106,13 @@ module user_domain import user_pkg::*; import croc_pkg::*; #(
 // User Subordinates
 //-------------------------------------------------------------------------------------------------
 
-  // User ROM
-  obi_ram #(
+  obi_rand #(
     .ObiCfg      ( SbrObiCfg     ),
     .obi_req_t   ( sbr_obi_req_t ),
     .obi_rsp_t   ( sbr_obi_rsp_t ),
     .BaseAddr    ( 32'h2000_0000),
     .Size        ( 32'h0000_1000)
-  ) i_user_rom (
+  ) i_user_rand (
     .clk_i,
     .rst_ni,
     .obi_req_i  ( user_rom_obi_req ),
