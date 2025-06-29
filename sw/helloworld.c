@@ -64,5 +64,29 @@ int main() {
     sleep_ms(10);
     printf("Tock\n");
     uart_write_flush();
+
+    // 32'h2000_0000;
+    volatile uint32_t* random_ptr = (volatile uint32_t*)0x20000000; // Pointer to RAM address
+    printf("pointer created\n");
+    uart_write_flush();
+    
+    // Add a delay to ensure UART output completes
+    for(volatile int i=0; i<1000; i++) { asm("nop"); }
+
+   
+    // read value 10 times
+    for (int i = 0; i < 10; i++) {
+        // Try the actual read
+        uint32_t random_val = *random_ptr;
+        
+        // If we get here, print the value
+        printf("read successful! Value: 0x%x\n", random_val);
+        uart_write_flush();
+        // Add a delay to ensure UART output completes
+        for(volatile int j=0; j<33; j++) { asm("nop"); }
+    }
+
+
+
     return 1;
 }

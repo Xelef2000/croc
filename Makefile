@@ -8,7 +8,7 @@
 # Tools
 BENDER	  ?= bender
 PYTHON3   ?= python3
-VERILATOR ?= /foss/tools/bin/verilator
+VERILATOR ?= verilator
 YOSYS     ?= yosys
 OPENROAD  ?= openroad
 KLAYOUT   ?= klayout
