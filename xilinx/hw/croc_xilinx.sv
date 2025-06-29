@@ -91,6 +91,11 @@ module croc_xilinx import croc_pkg::*; #(
 
   output logic  uart_tx_o,
   input  logic  uart_rx_i
+
+  input  logic spi_ram_miso_i,
+  output logic spi_ram_mosi_o,
+  output logic spi_ram_clk_o,
+  output logic spi_ram_cs_n_o
 );
 
   ////////////////////////
@@ -271,11 +276,15 @@ module croc_xilinx import croc_pkg::*; #(
 `endif
 
 
+
+
   //////////////////
   // Cheshire SoC //
   //////////////////
   logic  soc_testmode_i;
   assign soc_testmode_i = '0;
+
+
 
   croc_soc #(
     .GpioCount( GpioCount )
@@ -296,6 +305,12 @@ module croc_xilinx import croc_pkg::*; #(
 
     .uart_rx_i       ( uart_rx_i ),
     .uart_tx_o       ( uart_tx_o ),
+
+    .spi_ram_miso_i,
+    .spi_ram_mosi_o,
+    .spi_ram_sck_o,
+    .spi_ram_cs_o,
+
 
     .gpio_i          ( soc_gpio_i        ),             
     .gpio_o          ( soc_gpio_o        ),            
