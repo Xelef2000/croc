@@ -11,6 +11,10 @@
 #include "gpio.h"
 #include "util.h"
 
+#define PRNG_BASE 0x20000000
+#define PRNG_0    (PRNG_BASE + 0x0)  // First PRNG
+#define PRNG_1    (PRNG_BASE + 0x4)  // Second PRNG
+
 /// @brief Example integer square root
 /// @return integer square root of n
 uint32_t isqrt(uint32_t n) {
@@ -78,6 +82,8 @@ int main() {
     *random_ptr = seed; // Write the seed to the address 0x200000
     uint32_t random_val = *random_ptr;
     printf("Random value read from 0x20000000: 0x%x\n", random_val);
+
+
     uart_write_flush();
 
 

@@ -8,7 +8,7 @@ module obi_rand #(
     /// The response struct.
     parameter type obi_rsp_t = logic,
     /// Base address of the Module
-    parameter logic [31:0] BaseAddr = 32'h1000_0000,
+    parameter logic [31:0] BaseAddr = 32'h2000_0000,
     /// Size of address range in bytes
     parameter logic [31:0] Size = 32'h800
 ) (
@@ -27,16 +27,23 @@ module obi_rand #(
     logic [ObiCfg.AddrWidth-1:0] addr_d, addr_q; // Internal address of the word to read
     logic [ObiCfg.IdWidth-1:0] id_d, id_q; // Id of the request, must be same for the response
     logic [ObiCfg.DataWidth-1:0] data_d, data_q; // Data to be written (for write requests)
-    logic [ObiCfg.DataWidth-1:0] random_number, resp_data_d, resp_data_q; // Data to be returned in response
+    logic [ObiCfg.DataWidth-1:0] random_number_0, random_number_1, resp_data_d, resp_data_q; // Data to be returned in response
 
     // Seed control signals
     logic set_seed_d, set_seed_q;
     logic [31:0] seed_value_d, seed_value_q;
+    
+    // Address decode signals
+    logic addr_is_prng0, addr_is_prng1;
 
     // Check if address is in range
     logic addr_in_range;
     assign addr_in_range = (obi_req_i.a.addr >= BaseAddr) && 
                            (obi_req_i.a.addr < (BaseAddr + Size));
+
+    // Address decode for the two PRNG instances
+    assign addr_is_prng0 = (obi_req_i.a.addr == BaseAddr);           // First 32 bits (offset 0x0)
+    assign addr_is_prng1 = (obi_req_i.a.addr == (BaseAddr + 32'h4)); // Next 32 bits (offset 0x4)
 
     // Wire the registers holding the request - only when address is in range
     assign req_d = obi_req_i.req && addr_in_range;
@@ -44,20 +51,42 @@ module obi_rand #(
     assign we_d = obi_req_i.a.we;
     assign addr_d = obi_req_i.a.addr;
     assign data_d = obi_req_i.a.wdata;
-    assign resp_data_d = random_number; 
 
-    // Seed control logic - set seed when write is detected
-    assign set_seed_d = req_d && we_d;  // Set seed on write request
+    // Response data selection based on address
+    always_comb begin
+        if (addr_is_prng0) begin
+            resp_data_d = random_number_0;
+        end else if (addr_is_prng1) begin
+            resp_data_d = random_number_1;
+        end else begin
+            resp_data_d = '0;  // Return 0 for other addresses
+        end
+    end
+
+    // Seed control logic - set seed when write is detected to either PRNG address
+    assign set_seed_d = req_d && we_d && (addr_is_prng0 || addr_is_prng1);
     assign seed_value_d = data_d;       // Use write data as seed value
 
+    // First PRNG instance
     prand #(
         .Seed(32'h1A2B3C4D) 
-    ) i_prand (
+    ) i_prand_0 (
         .clk_i(clk_i),
         .rst_ni(rst_ni),
         .set_seed_i(set_seed_q),        // Connect seed control
         .seed_i(seed_value_q),          // Connect seed value
-        .random_number_o(random_number)
+        .random_number_o(random_number_0)
+    );
+
+    // Second PRNG instance with different seed
+    prand #(
+        .Seed(32'h4D3C2B1A) 
+    ) i_prand_1 (
+        .clk_i(clk_i),
+        .rst_ni(rst_ni),
+        .set_seed_i(set_seed_q),        // Connect seed control
+        .seed_i(seed_value_q),          // Connect seed value
+        .random_number_o(random_number_1)
     );
 
     always_comb begin
