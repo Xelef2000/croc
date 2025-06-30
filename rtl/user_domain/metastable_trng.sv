@@ -5,16 +5,15 @@ module metastable_trng (
     output logic valid
 );
 
-    // A free-running toggle flip-flop (asynchronous, non-coherent input)
-    logic async_noise;
-    always_ff @(posedge clk) begin
-        async_noise <= ~async_noise; // simple oscillator
-    end
+    wire noisy_signal;
+    ring_oscillator ro_inst (
+        .osc_out(noisy_signal)
+    );
 
     // Two flip-flops for metastability sampling
     logic meta_ff1, meta_ff2;
     always_ff @(posedge clk) begin
-        meta_ff1 <= async_noise;
+        meta_ff1 <= noisy_signal;
         meta_ff2 <= meta_ff1;
     end
 
