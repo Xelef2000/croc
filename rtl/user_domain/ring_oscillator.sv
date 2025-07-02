@@ -2,7 +2,7 @@ module ring_oscillator (
     output wire osc_out
 );
 
-`ifdef VERILATOR
+`ifndef TARGET_ASIC
     // Simulatable version: use a toggle register driven by a clock
     reg dummy_osc = 0;
 
