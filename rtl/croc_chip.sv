@@ -22,7 +22,7 @@ module croc_chip import croc_pkg::*; #() (
   input  wire spi_ram_miso_i,
   output wire spi_ram_mosi_o,
   output wire spi_ram_sck_o,
-  output wire spi_ram_cs_o,
+  output wire spi_ram_cs_n_o,
 
   input  wire fetch_en_i,
   output wire status_o,
@@ -77,8 +77,7 @@ module croc_chip import croc_pkg::*; #() (
     logic soc_spi_ram_miso_i;
     logic soc_spi_ram_mosi_o;
     logic soc_spi_ram_sck_o;
-    logic soc_spi_ram_cs_o;
-
+    logic soc_spi_ram_cs_n_o;
     logic soc_fetch_en_i;
     logic soc_status_o;
 
@@ -105,7 +104,7 @@ module croc_chip import croc_pkg::*; #() (
     sg13g2_IOPadIn        pad_spi_ram_miso_i (.pad(spi_ram_miso_i), .p2c(soc_spi_ram_miso_i));
     sg13g2_IOPadOut16mA   pad_spi_ram_mosi_o (.pad(spi_ram_mosi_o), .c2p(soc_spi_ram_mosi_o));
     sg13g2_IOPadOut16mA   pad_spi_ram_sck_o  (.pad(spi_ram_sck_o),  .c2p(soc_spi_ram_sck_o));
-    sg13g2_IOPadOut16mA   pad_spi_ram_cs_o   (.pad(spi_ram_cs_o),   .c2p(soc_spi_ram_cs_o));
+    sg13g2_IOPadOut16mA   pad_spi_ram_cs_n_o   (.pad(spi_ram_cs_n_o),   .c2p(soc_spi_ram_cs_n_o));
 
 
     sg13g2_IOPadIn        pad_fetch_en_i   (.pad(fetch_en_i),   .p2c(soc_fetch_en_i));
@@ -188,7 +187,7 @@ module croc_chip import croc_pkg::*; #() (
     .spi_ram_miso_i ( soc_spi_ram_miso_i ),
     .spi_ram_mosi_o ( soc_spi_ram_mosi_o ),
     .spi_ram_sck_o  ( soc_spi_ram_sck_o  ),
-    .spi_ram_cs_o   ( soc_spi_ram_cs_o   ),
+    .spi_ram_cs_n_o ( soc_spi_ram_cs_n_o ),
   
     .gpio_i         ( soc_gpio_i        ),             
     .gpio_o         ( soc_gpio_o        ),            

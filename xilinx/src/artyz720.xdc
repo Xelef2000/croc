@@ -54,25 +54,25 @@ set_output_delay -clock sys_clk 0.0 [get_ports {gpio_o*}]
 
 
 # --------------------------------------------------------------------------------------------------
-# Pmod Header JB
+# JTAG
 # --------------------------------------------------------------------------------------------------
-set_property -dict { PACKAGE_PIN W19   IOSTANDARD LVCMOS33 }     [get_ports { jtag_tms_i   }];          #IO_L15P_T2_DQS_13          Sch=jb_p[1]
-set_property -dict { PACKAGE_PIN W18   IOSTANDARD LVCMOS33 }     [get_ports { jtag_tdi_i   }];          #IO_L15N_T2_DQS_13          Sch=jb_n[1]
-set_property -dict { PACKAGE_PIN U19   IOSTANDARD LVCMOS33 }     [get_ports { jtag_tdo_o   }];          #IO_L11P_T1_SRCC_13         Sch=jb_p[2]
-set_property -dict { PACKAGE_PIN U18   IOSTANDARD LVCMOS33 }     [get_ports { jtag_tck_i   }];          #IO_L11N_T1_SRCC_13         Sch=jb_n[2]
+set_property -dict { PACKAGE_PIN W19   IOSTANDARD LVCMOS33 }     [get_ports { jtag_tms_i   }];
+set_property -dict { PACKAGE_PIN W18   IOSTANDARD LVCMOS33 }     [get_ports { jtag_tdi_i   }];
+set_property -dict { PACKAGE_PIN U19   IOSTANDARD LVCMOS33 }     [get_ports { jtag_tdo_o   }];
+set_property -dict { PACKAGE_PIN U18   IOSTANDARD LVCMOS33 }     [get_ports { jtag_tck_i   }];
 
 # --------------------------------------------------------------------------------------------------
-# Pmod Header JA
+# UART
 # --------------------------------------------------------------------------------------------------
-set_property -dict { PACKAGE_PIN T14  IOSTANDARD LVCMOS33 }     [get_ports { uart_rx_i }];          #IO_L10P_T1_34              Sch=jc_p[1]
-set_property -dict { PACKAGE_PIN U12  IOSTANDARD LVCMOS33 }     [get_ports { uart_tx_o }];          #IO_L10N_T1_34              Sch=jc_n[1]
+set_property -dict { PACKAGE_PIN T14  IOSTANDARD LVCMOS33 }     [get_ports { uart_rx_i }];
+set_property -dict { PACKAGE_PIN U12  IOSTANDARD LVCMOS33 }     [get_ports { uart_tx_o }];
 
 # --------------------------------------------------------------------------------------------------
 # SPI RAM
 # --------------------------------------------------------------------------------------------------
 set_property -dict { PACKAGE_PIN U13   IOSTANDARD LVCMOS33 } [get_ports { spi_ram_cs_n_o }]; #IO_L3P_T0_DQS_PUDC_B_34 Sch=CK_IO2
 set_property -dict { PACKAGE_PIN V13   IOSTANDARD LVCMOS33 } [get_ports { spi_ram_miso_i }]; #IO_L3N_T0_DQS_34 Sch=CK_IO3
-set_property -dict { PACKAGE_PIN V15   IOSTANDARD LVCMOS33 } [get_ports { spi_ram_clk_o  }]; #IO_L10P_T1_34 Sch=CK_IO4
+set_property -dict { PACKAGE_PIN V15   IOSTANDARD LVCMOS33 } [get_ports { spi_ram_sck_o  }]; #IO_L10P_T1_34 Sch=CK_IO4
 set_property -dict { PACKAGE_PIN T15   IOSTANDARD LVCMOS33 } [get_ports { spi_ram_mosi_o }]; #IO_L5N_T0_34 Sch=CK_IO5
 
 ############

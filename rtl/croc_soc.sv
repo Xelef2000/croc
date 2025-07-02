@@ -15,25 +15,32 @@ module croc_soc import croc_pkg::*; #(
   input  logic fetch_en_i,
   output logic status_o,
 
+  // JTAG
   input  logic jtag_tck_i,
   input  logic jtag_tdi_i,
   output logic jtag_tdo_o,
   input  logic jtag_tms_i,
   input  logic jtag_trst_ni,
 
+  // UART
   input  logic uart_rx_i,
   output logic uart_tx_o,
 
+  // SPI RAM
   input  logic spi_ram_miso_i,
   output logic spi_ram_mosi_o,
   output logic spi_ram_sck_o,
-  output logic spi_ram_cs_o,
+  output logic spi_ram_cs_n_o,
 
-  input  logic [GpioCount-1:0] gpio_i,       // Input from GPIO pins
-  output logic [GpioCount-1:0] gpio_o,       // Output to GPIO pins
-  output logic [GpioCount-1:0] gpio_out_en_o // Output enable signal; 0 -> input, 1 -> output
+  // GPIOs
+  input  logic [GpioCount-1:0] gpio_i,
+  output logic [GpioCount-1:0] gpio_o,
+  output logic [GpioCount-1:0] gpio_out_en_o
 );
 
+  ///////////////
+  // Reset Sync //
+  ///////////////
   logic synced_rst_n, synced_fetch_en;
 
   rstgen i_rstgen (
@@ -41,85 +48,103 @@ module croc_soc import croc_pkg::*; #(
     .rst_ni,
     .test_mode_i ( testmode_i ),
     .rst_no      ( synced_rst_n ),
-    .init_no ( )
+    .init_no     ( )
   );
 
   sync #(
-      .STAGES     (    2 ),
-      .ResetValue ( 1'b0 )
-    ) i_ext_intr_sync (
-      .clk_i,
-      .rst_ni   ( synced_rst_n    ),
-      .serial_i ( fetch_en_i      ),
-      .serial_o ( synced_fetch_en )
-    );
+    .STAGES     (2),
+    .ResetValue (1'b0)
+  ) i_ext_intr_sync (
+    .clk_i,
+    .rst_ni   ( synced_rst_n ),
+    .serial_i ( fetch_en_i ),
+    .serial_o ( synced_fetch_en )
+  );
 
-// Connection between Croc_domain and User_domain: User Sbr, Croc Mgr
-sbr_obi_req_t user_sbr_obi_req;
-sbr_obi_rsp_t user_sbr_obi_rsp;
+  ///////////////////////
+  // OBI Interconnects //
+  ///////////////////////
 
-// Connection between Croc_domain and User_domain: Croc Sbr, User Mgr
-mgr_obi_req_t user_mgr_obi_req;
-mgr_obi_rsp_t user_mgr_obi_rsp;
+  // Croc <-> User (shared bus resource)
+  sbr_obi_req_t user_sbr_obi_req;
+  sbr_obi_rsp_t user_sbr_obi_rsp;
 
-logic [NumExternalIrqs-1:0] interrupts;
-logic [GpioCount-1:0] gpio_in_sync;
+  // User <-> Croc (manager role)
+  mgr_obi_req_t user_mgr_obi_req;
+  mgr_obi_rsp_t user_mgr_obi_rsp;
 
-croc_domain #(
-  .GpioCount( GpioCount ) 
-) i_croc (
-  .clk_i,
-  .rst_ni ( synced_rst_n ),
-  .ref_clk_i,
-  .testmode_i,
-  .fetch_en_i ( synced_fetch_en ),
+  ///////////////////////
+  // GPIO & Interrupts //
+  ///////////////////////
+  logic [GpioCount-1:0] gpio_in_sync;
+  logic [NumExternalIrqs-1:0] interrupts;
 
-  .jtag_tck_i,
-  .jtag_tdi_i,
-  .jtag_tdo_o,
-  .jtag_tms_i,
-  .jtag_trst_ni,
+  ////////////////////
+  // Croc Domain SoC //
+  ////////////////////
+  croc_domain #(
+    .GpioCount(GpioCount)
+  ) i_croc (
+    .clk_i,
+    .rst_ni           ( synced_rst_n ),
+    .ref_clk_i,
+    .testmode_i,
+    .fetch_en_i       ( synced_fetch_en ),
 
-  .uart_rx_i,
-  .uart_tx_o,
+    // JTAG
+    .jtag_tck_i,
+    .jtag_tdi_i,
+    .jtag_tdo_o,
+    .jtag_tms_i,
+    .jtag_trst_ni,
 
-  .spi_ram_miso_i,
-  .spi_ram_mosi_o,
-  .spi_ram_sck_o,
-  .spi_ram_cs_o,
+    // UART
+    .uart_rx_i,
+    .uart_tx_o,
 
-  .gpio_i,             
-  .gpio_o,            
-  .gpio_out_en_o,
+    // SPI RAM
+    .spi_ram_miso_i   ( spi_ram_miso_i ),
+    .spi_ram_mosi_o   ( spi_ram_mosi_o ),
+    .spi_ram_sck_o    ( spi_ram_sck_o  ),
+    .spi_ram_cs_n_o   ( spi_ram_cs_n_o  ),
 
-  .gpio_in_sync_o ( gpio_in_sync ),
+    // GPIOs
+    .gpio_i,
+    .gpio_o,
+    .gpio_out_en_o,
+    .gpio_in_sync_o   ( gpio_in_sync ),
 
-  .user_sbr_obi_req_o  ( user_sbr_obi_req ),
-  .user_sbr_obi_rsp_i  ( user_sbr_obi_rsp ),
+    // Bus connections
+    .user_sbr_obi_req_o ( user_sbr_obi_req ),
+    .user_sbr_obi_rsp_i ( user_sbr_obi_rsp ),
 
-  .user_mgr_obi_req_i  ( user_mgr_obi_req ),
-  .user_mgr_obi_rsp_o  ( user_mgr_obi_rsp ),
+    .user_mgr_obi_req_i ( user_mgr_obi_req ),
+    .user_mgr_obi_rsp_o ( user_mgr_obi_rsp ),
 
-  .interrupts_i ( interrupts  ),
-  .core_busy_o  ( status_o    )
-);
+    // Interrupts
+    .interrupts_i     ( interrupts ),
+    .core_busy_o      ( status_o )
+  );
 
-user_domain #(
-  .GpioCount( GpioCount ) 
-) i_user (
-  .clk_i,
-  .rst_ni ( synced_rst_n ),
-  .ref_clk_i,
-  .testmode_i,
+  /////////////////////
+  // User Domain SoC //
+  /////////////////////
+  user_domain #(
+    .GpioCount(GpioCount)
+  ) i_user (
+    .clk_i,
+    .rst_ni        ( synced_rst_n ),
+    .ref_clk_i,
+    .testmode_i,
 
-  .user_sbr_obi_req_i ( user_sbr_obi_req ),
-  .user_sbr_obi_rsp_o ( user_sbr_obi_rsp ),
+    .user_sbr_obi_req_i ( user_sbr_obi_req ),
+    .user_sbr_obi_rsp_o ( user_sbr_obi_rsp ),
 
-  .user_mgr_obi_req_o ( user_mgr_obi_req ),
-  .user_mgr_obi_rsp_i ( user_mgr_obi_rsp ),
+    .user_mgr_obi_req_o ( user_mgr_obi_req ),
+    .user_mgr_obi_rsp_i ( user_mgr_obi_rsp ),
 
-  .gpio_in_sync_i ( gpio_in_sync ),
-  .interrupts_o   ( interrupts   )
-);
+    .gpio_in_sync_i ( gpio_in_sync ),
+    .interrupts_o   ( interrupts )
+  );
 
 endmodule

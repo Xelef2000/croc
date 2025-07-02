@@ -26,7 +26,7 @@ module croc_domain import croc_pkg::*; #(
   input  logic spi_ram_miso_i,
   output logic spi_ram_mosi_o,
   output logic spi_ram_sck_o,
-  output logic spi_ram_cs_o,
+  output logic spi_ram_cs_n_o,
 
 
   input  logic [GpioCount-1:0] gpio_i,        // Input from GPIO pins
@@ -475,7 +475,7 @@ module croc_domain import croc_pkg::*; #(
     .spi_clk_i     ( spi_clk       ),
     .miso_i        ( spi_ram_miso_i ),
     .mosi_o       ( spi_ram_mosi_o ),
-    .cs_n_o       ( spi_ram_cs_o   ),
+    .cs_n_o       ( spi_ram_cs_n_o   ),
 
     .rsp_valid_o   ( spi_rsp),
     .rdata_o       ( spi_resp_data)

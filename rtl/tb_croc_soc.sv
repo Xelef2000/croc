@@ -96,7 +96,7 @@ module tb_croc_soc #(
     //////////////
     // SPI RAM  //
     //////////////
-    logic spi_ram_cs_n;
+    logic spi_ram_cs_n_o;
     logic spi_ram_clk;
     logic spi_ram_mosi;
     logic spi_ram_miso;
@@ -124,7 +124,7 @@ module tb_croc_soc #(
         .SI_SIO0 ( spi_ram_sio0 ),
         .SO_SIO1 ( spi_ram_sio1 ),
         .SCK     ( spi_ram_clk  ),
-        .CS_N    ( spi_ram_cs_n ),
+        .CS_N    ( spi_ram_cs_n_o ),
         .VCC     ( spi_ram_vcc  ),
         .VBAT    ( spi_ram_vbat ),
         .RESET   ( spi_ram_reset )
@@ -466,7 +466,7 @@ module tb_croc_soc #(
         .spi_ram_miso_i( spi_ram_miso ),
         .spi_ram_mosi_o( spi_ram_mosi ),
         .spi_ram_sck_o ( spi_ram_clk  ),
-        .spi_ram_cs_o  ( spi_ram_cs_n ),
+        .spi_ram_cs_n_o  ( spi_ram_cs_n_o ),
 
         .gpio_i        ( gpio_i        ),             
         .gpio_o        ( gpio_o        ),            
