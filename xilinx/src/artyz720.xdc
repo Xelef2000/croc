@@ -67,6 +67,13 @@ set_property -dict { PACKAGE_PIN U18   IOSTANDARD LVCMOS33 }     [get_ports { jt
 set_property -dict { PACKAGE_PIN T14  IOSTANDARD LVCMOS33 }     [get_ports { uart_rx_i }];          #IO_L10P_T1_34              Sch=jc_p[1]
 set_property -dict { PACKAGE_PIN U12  IOSTANDARD LVCMOS33 }     [get_ports { uart_tx_o }];          #IO_L10N_T1_34              Sch=jc_n[1]
 
+# --------------------------------------------------------------------------------------------------
+# SPI RAM
+# --------------------------------------------------------------------------------------------------
+set_property -dict { PACKAGE_PIN U13   IOSTANDARD LVCMOS33 } [get_ports { spi_ram_cs_n_o }]; #IO_L3P_T0_DQS_PUDC_B_34 Sch=CK_IO2
+set_property -dict { PACKAGE_PIN V13   IOSTANDARD LVCMOS33 } [get_ports { spi_ram_miso_i }]; #IO_L3N_T0_DQS_34 Sch=CK_IO3
+set_property -dict { PACKAGE_PIN V15   IOSTANDARD LVCMOS33 } [get_ports { spi_ram_clk_o  }]; #IO_L10P_T1_34 Sch=CK_IO4
+set_property -dict { PACKAGE_PIN T15   IOSTANDARD LVCMOS33 } [get_ports { spi_ram_mosi_o }]; #IO_L5N_T0_34 Sch=CK_IO5
 
 ############
 # Switches #
