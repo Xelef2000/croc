@@ -11,7 +11,11 @@
 #include "gpio.h"
 #include "util.h"
 
-#define PRNG_BASE 0x20000000
+
+#define ROM_BASE 0x20000000
+#define ROM_SIZE 36
+
+#define PRNG_BASE (ROM_BASE + 0x1000) // 4KB offset for PRNGs
 #define PRNG_0    (PRNG_BASE + 0x0)  // First PRNG
 #define PRNG_1    (PRNG_BASE + 0x4)  // Second PRNG
 
