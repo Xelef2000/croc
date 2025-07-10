@@ -1,0 +1,12 @@
+  violation type: Short
+    srcs: net:i_croc_soc/i_croc/_3003_ net:VSS 
+    bbox = ( 1129.34, 1364.48 ) - ( 1129.54, 1364.68 ) on Layer Metal2
+  violation type: Short
+    srcs: net:i_croc_soc/i_croc/i_core_wrap/_4362_ net:VDD 
+    bbox = ( 1197.02, 1254.86 ) - ( 1197.22, 1255.06 ) on Layer Metal2
+  violation type: Metal Spacing
+    srcs: net:i_croc_soc/i_croc/i_dm_top.i_dm_top/cmd_0_ 
+    bbox = ( 1076.3, 856.36 ) - ( 1076.52, 856.49 ) on Layer Metal2
+  violation type: Metal Spacing
+    srcs: net:i_croc_soc/i_croc/i_dm_top.i_dm_top/cmd_0_ 
+    bbox = ( 1076.52, 856.36 ) - ( 1076.54, 856.49 ) on Layer Metal2

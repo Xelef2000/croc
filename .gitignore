@@ -28,10 +28,6 @@
 # innovus
 /innovus/enc.tcl
 /innovus/save
-/innovus/out
-/innovus/timingReports
-/innovus/powerReports
-/innovus/reports
 /innovus/extLogDir
 /innovus/work
 /innovus/work_vs2api
@@ -50,9 +46,7 @@
 /synopsys/WORK
 /synopsys/DDC
 /synopsys/alib
-/synopsys/reports
 /synopsys/save
-/synopsys/out
 /synopsys/
 /synopsys/default.svf
 /synopsys/.synopsys_dc.setup
@@ -67,7 +61,6 @@
 /modelsim/*.wlf
 /modelsim/transcript
 # tetramax
-/tetramax/reports
 /tetramax/tmaxtcl.rc
 /tetramax/scripts/read_lib.tcl
 /tetramax/scripts/tmax.tcl
@@ -75,8 +68,6 @@
 /klayout/*-example
 /klayout/start_klayout
 #openroad
-/openroad/out
-/openroad/save
+# /openroad/save
 #/openroad/src
 #yosys
-/yosys/out

@@ -29,6 +29,11 @@ module obi_rand #(
     logic [ObiCfg.DataWidth-1:0] data_d, data_q; // Data to be written (for write requests)
     logic [ObiCfg.DataWidth-1:0] random_number_0, random_number_1, random_number_2, resp_data_d, resp_data_q; // Data to be returned in response
 
+
+     // Signals used to create the response
+    logic [ObiCfg.DataWidth-1:0] rsp_data; // Data field of the obi response
+    logic rsp_err; // Error field of the obi response
+
     // Seed control signals
     logic set_seed_d, set_seed_q;
     logic [31:0] seed_value_d, seed_value_q;
@@ -166,10 +171,6 @@ module obi_rand #(
             addr_is_trand_q <= addr_is_trand_d;
         end
     end
-
-    // Signals used to create the response
-    logic [ObiCfg.DataWidth-1:0] rsp_data; // Data field of the obi response
-    logic rsp_err; // Error field of the obi response
 
     // Wire the response
     // A channel

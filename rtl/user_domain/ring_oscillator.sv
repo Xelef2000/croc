@@ -5,6 +5,7 @@ module ring_oscillator (
 `ifndef TARGET_ASIC
     // Simulatable version: use a toggle register driven by a clock
     reg dummy_osc = 0;
+    reg dummy_clk = 0;
 
     reg [7:0] counter = 0;
     always @(posedge dummy_clk) begin
@@ -13,7 +14,7 @@ module ring_oscillator (
             dummy_osc <= ~dummy_osc;
     end
 
-    reg dummy_clk = 0;
+   
     always #500 dummy_clk = ~dummy_clk; // 1MHz simulated clock
 
     assign osc_out = dummy_osc;

@@ -1,0 +1,27 @@
+Group                                  Slack
+--------------------------------------------
+
+max slew
+
+Pin                                    Limit    Slew   Slack
+------------------------------------------------------------
+pad_gpio4_io/pad                        1.20    1.91   -0.71 (VIOLATED)
+
+max fanout
+
+Pin                                   Limit Fanout  Slack
+---------------------------------------------------------
+i_croc_soc/i_croc/_4405_/Y                8    103    -95 (VIOLATED)
+
+max capacitance
+
+Pin                                    Limit     Cap   Slack
+------------------------------------------------------------
+i_croc_soc/i_croc/gen_sram_bank[0].i_sram/gen_512x32xBx1.i_cut/A_DOUT[31]    0.06    0.00    0.06 (MET)
+
+min capacitance
+
+Pin                                    Limit     Cap   Slack
+------------------------------------------------------------
+i_croc_soc/i_croc/_4540_/Y              0.00    0.00   -0.00 (VIOLATED)
+
