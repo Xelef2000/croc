@@ -83,44 +83,40 @@ int main() {
     uart_write_flush();
 
     // toggling some GPIOs
-    gpio_set_direction(0xFFFF, 0x000F); // lowest four as outputs
-    gpio_write(0x0A);  // ready output pattern
-    gpio_enable(0xFF); // enable lowest eight
-    // wait a few cycles to give GPIO signal time to propagate
-    asm volatile ("nop; nop; nop; nop; nop;");
-    printf("GPIO (expect 0xA0): 0x%x\n", gpio_read());
+    // gpio_set_direction(0xFFFF, 0x000F); // lowest four as outputs
+    // gpio_write(0x0A);  // ready output pattern
+    // gpio_enable(0xFF); // enable lowest eight
+    // // wait a few cycles to give GPIO signal time to propagate
+    // asm volatile ("nop; nop; nop; nop; nop;");
+    // printf("GPIO (expect 0xA0): 0x%x\n", gpio_read());
 
-    gpio_toggle(0x0F); // toggle lower 8 GPIOs
-    asm volatile ("nop; nop; nop; nop; nop;");
-    printf("GPIO (expect 0x50): 0x%x\n", gpio_read());
-    uart_write_flush();
+    // gpio_toggle(0x0F); // toggle lower 8 GPIOs
+    // asm volatile ("nop; nop; nop; nop; nop;");
+    // printf("GPIO (expect 0x50): 0x%x\n", gpio_read());
+    // uart_write_flush();
 
-    // doing some compute
-    uint32_t start = get_mcycle();
-    uint32_t res   = isqrt(1234567890UL);
-    uint32_t end   = get_mcycle();
-    printf("Result: 0x%x, Cycles: 0x%x\n", res, end - start);
-    uart_write_flush();
+    // // doing some compute
+    // uint32_t start = get_mcycle();
+    // uint32_t res   = isqrt(1234567890UL);
+    // uint32_t end   = get_mcycle();
+    // printf("Result: 0x%x, Cycles: 0x%x\n", res, end - start);
+    // uart_write_flush();
 
-    // using the timer
-    printf("Tick\n");
-    sleep_ms(10);
-    printf("Tock\n");
-    uart_write_flush();
+    // // using the timer
+    // printf("Tick\n");
+    // sleep_ms(10);
+    // printf("Tock\n");
+    // uart_write_flush();
 
     // Read and display ROM string
-    char rom_string[64];  // Buffer for the string
-    int length = read_rom_string(rom_string, sizeof(rom_string));
-    
-    printf("ROM String: %s\n", rom_string);
-    printf("String length: %d\n", length);
-    
-    // Also show the raw hex data from ROM
-    printf("Raw ROM data (first 9 words):\n");
+
     volatile uint32_t* rom_ptr = (volatile uint32_t*)ROM_BASE;
     for (int i = 0; i < 9; i++) {
-        printf("Word %d: 0x%x\n", i, rom_ptr[i]);
+        volatile uint32_t val = *rom_ptr;
+        printf("ROM: 0x%x\n", val);
+        rom_ptr++;
     }
+
     uart_write_flush();
 
     // Test PRNG functionality with updated addresses
