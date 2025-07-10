@@ -77,13 +77,17 @@ int main() {
 
     // Read and display ROM string
 
-    volatile uint32_t* rom_ptr = (volatile uint32_t*)ROM_BASE;
-    for (int i = 0; i < 9; i++) {
-        volatile uint32_t val = *rom_ptr;
-        char* chars = (char*)&val;
-        printf("ROM chars: %c%c%c%c\n", chars[0], chars[1], chars[2], chars[3]);
-        rom_ptr++;
+    // Correct way to read the ROM byte by byte
+    volatile char* rom_ptr_char = (volatile char*)ROM_BASE;
+    printf("Reading ROM content:\n");
+    for (int i = 0; i < ROM_SIZE; i++) {
+        char c = rom_ptr_char[i];
+        // Print the character if it's printable, otherwise print its hex value
+        if (c >= 32 && c <= 126) {
+            putchar(c);
+        }
     }
+    printf("\n");
 
 
     uart_write_flush();
