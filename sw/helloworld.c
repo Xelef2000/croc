@@ -40,39 +40,6 @@ uint32_t isqrt(uint32_t n) {
     return res;
 }
 
-int read_rom_string(char* buffer, int max_len) {
-    volatile uint32_t* rom_ptr = (volatile uint32_t*)ROM_BASE;
-    int char_count = 0;
-    int word_idx = 0;
-    
-    // Read words from ROM and extract characters
-    while (char_count < max_len - 1) {  // Leave space for null terminator
-        uint32_t word = rom_ptr[word_idx];
-        
-        // Extract 4 bytes from the word (little-endian)
-        for (int byte_idx = 0; byte_idx < 4 && char_count < max_len - 1; byte_idx++) {
-            char ch = (word >> (byte_idx * 8)) & 0xFF;
-            
-            if (ch == '\0') {
-                // Found null terminator
-                buffer[char_count] = '\0';
-                return char_count;
-            }
-            
-            buffer[char_count++] = ch;
-        }
-        
-        word_idx++;
-        
-        // Safety check to prevent reading beyond ROM
-        if (word_idx * 4 >= ROM_SIZE) {
-            break;
-        }
-    }
-    
-    buffer[char_count] = '\0';
-    return char_count;
-}
 
 int main() {
     uart_init(); // setup the uart peripheral
