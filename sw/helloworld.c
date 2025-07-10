@@ -35,6 +35,40 @@ uint32_t isqrt(uint32_t n) {
     return res;
 }
 
+int read_rom_string(char* buffer, int max_len) {
+    volatile uint32_t* rom_ptr = (volatile uint32_t*)ROM_BASE;
+    int char_count = 0;
+    int word_idx = 0;
+    
+    // Read words from ROM and extract characters
+    while (char_count < max_len - 1) {  // Leave space for null terminator
+        uint32_t word = rom_ptr[word_idx];
+        
+        // Extract 4 bytes from the word (little-endian)
+        for (int byte_idx = 0; byte_idx < 4 && char_count < max_len - 1; byte_idx++) {
+            char ch = (word >> (byte_idx * 8)) & 0xFF;
+            
+            if (ch == '\0') {
+                // Found null terminator
+                buffer[char_count] = '\0';
+                return char_count;
+            }
+            
+            buffer[char_count++] = ch;
+        }
+        
+        word_idx++;
+        
+        // Safety check to prevent reading beyond ROM
+        if (word_idx * 4 >= ROM_SIZE) {
+            break;
+        }
+    }
+    
+    buffer[char_count] = '\0';
+    return char_count;
+}
+
 int main() {
     uart_init(); // setup the uart peripheral
 
@@ -69,50 +103,54 @@ int main() {
     printf("Tock\n");
     uart_write_flush();
 
-    // 32'h2000_0000;
-    volatile uint32_t* random_ptr = (volatile uint32_t*)0x20000000; // Pointer to RAM address
-    printf("pointer created\n");
-    uart_write_flush();
+
+
+    char rom_string[64];  // Buffer for the string
+    int length = read_rom_string(rom_string, sizeof(rom_string));
     
-    // Add a delay to ensure UART output completes
-    for(volatile int i=0; i<1000; i++) { asm("nop"); }
-
-    uint32_t seed = 0x600;
-    // Write the seed to the random number generator
-    *random_ptr = seed; // Write the seed to the address 0x200000
-    uint32_t random_val = *random_ptr;
-    printf("Random value read from 0x20000000: 0x%x\n", random_val);
-
-    random_ptr = (volatile uint32_t*)0x20000008; // Pointer to RAM address
-    printf("pointer created\n");
-    uart_write_flush();
+    printf("ROM String: %s\n", rom_string);
+    printf("String length: %d\n", length);
     
-    // Add a delay to ensure UART output completes
-    for(volatile int i=0; i<1000; i++) { asm("nop"); }
+    // Also show the raw hex data from ROM
+    printf("Raw ROM data (first 9 words):\n");
+    volatile uint32_t* rom_ptr = (volatile uint32_t*)ROM_BASE;
+    for (int i = 0; i < 9; i++) {
+        printf("Word %d: 0x%x\n", i, rom_ptr[i]);
+    }
+    
+    // wait until uart has finished sending
 
-    seed = 0x600;
-    // Write the seed to the random number generator
+    // // 32'h2000_0000;
+    // volatile uint32_t* random_ptr = (volatile uint32_t*)0x20000000; // Pointer to RAM address
+    // printf("pointer created\n");
+    // uart_write_flush();
+    
+    // // Add a delay to ensure UART output completes
+    // for(volatile int i=0; i<1000; i++) { asm("nop"); }
+
+    // uint32_t seed = 0x600;
+    // // Write the seed to the random number generator
     // *random_ptr = seed; // Write the seed to the address 0x200000
-    random_val = *random_ptr;
-    printf("Random value read from 0x20000004: 0x%x\n", random_val);
+    // uint32_t random_val = *random_ptr;
+    // printf("Random value read from 0x20000000: 0x%x\n", random_val);
+
+    // random_ptr = (volatile uint32_t*)0x20000008; // Pointer to RAM address
+    // printf("pointer created\n");
+    // uart_write_flush();
+    
+    // // Add a delay to ensure UART output completes
+    // for(volatile int i=0; i<1000; i++) { asm("nop"); }
+
+    // seed = 0x600;
+    // // Write the seed to the random number generator
+    // // *random_ptr = seed; // Write the seed to the address 0x200000
+    // random_val = *random_ptr;
+    // printf("Random value read from 0x20000004: 0x%x\n", random_val);
     
 
 
     uart_write_flush();
 
-
-   
-    // // read value 10 times
-    // for (int i = 0; i < 10; i++) {
-    //     // Try the actual read
-    //     uint32_t random_val = *random_ptr;
-        
-    //     // If we get here, print the value
-    //     printf("read successful! Value: 0x%x\n", random_val);
-    //     uart_write_flush();
-    //     // Add a delay to ensure UART output completes
-    //     for(volatile int j=0; j<33; j++) { asm("nop"); }
-    // }
 
 
 
