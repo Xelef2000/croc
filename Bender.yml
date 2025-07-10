@@ -50,7 +50,7 @@ sources:
       - rtl/user_domain/metastable_trng.sv
       - rtl/user_domain/trand.sv
       - rtl/user_domain/ring_oscillator.sv
-      - rtl/user_domain/obi_usr_rom.sv
+      - rtl/user_domain/user_rom.sv
       # add your design files with modules here
       # Level 3
       - rtl/croc_soc.sv
