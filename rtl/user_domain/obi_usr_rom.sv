@@ -1,44 +1,41 @@
+// Copyright 2023 ETH Zurich and University of Bologna.
+// Solderpad Hardware License, Version 0.51, see LICENSE for details.
+// SPDX-License-Identifier: SHL-0.51
+// gives us the `FF(...) macro making it easy to have properly defined flip-flops
 `include "common_cells/registers.svh"
-module obi_spi_rom #(
-    /// The OBI configuration for all ports.
-    parameter obi_pkg::obi_cfg_t ObiCfg = obi_pkg::ObiDefaultConfig,
-    /// The request struct.
-    parameter type obi_req_t = logic,
-    /// The response struct.
-    parameter type obi_rsp_t = logic,
-    /// Base address of the ROM
-    parameter logic [31:0] BaseAddr = 32'h1000_0000,
-    /// Size of ROM address range in bytes
-    parameter logic [31:0] Size = 32'h800
+// simple ROM
+module user_rom #(
+/// The OBI configuration for all ports.
+parameter obi_pkg::obi_cfg_t ObiCfg = obi_pkg::ObiDefaultConfig,
+/// The request struct.
+parameter type obi_req_t = logic,
+/// The response struct.
+parameter type obi_rsp_t = logic
 ) (
-    /// Clock
-    input logic clk_i,
-    /// Active-low reset
-    input logic rst_ni,
-    /// OBI request interface
-    input obi_req_t obi_req_i,
-    /// OBI response interface
-    output obi_rsp_t obi_rsp_o
+/// Clock
+input logic clk_i,
+/// Active-low reset
+input logic rst_ni,
+/// OBI request interface
+input obi_req_t obi_req_i,
+/// OBI response interface
+output obi_rsp_t obi_rsp_o
 );
-
     // Define some registers to hold the requests fields
-    logic req_d, req_q;
-    logic we_d, we_q;
-    logic [ObiCfg.AddrWidth-1:0] addr_d, addr_q;
-    logic [ObiCfg.IdWidth-1:0] id_d, id_q;
-
-    // Check if address is in range
-    logic addr_in_range;
-    assign addr_in_range = (obi_req_i.a.addr >= BaseAddr) &&
-                          (obi_req_i.a.addr < (BaseAddr + Size));
-
-    // Wire the registers holding the request - only when address is in range
-    assign req_d = obi_req_i.req && addr_in_range;
+    logic req_d, req_q; // Request valid
+    logic we_d, we_q; // Write enable
+    logic [ObiCfg.AddrWidth-1:0] addr_d, addr_q; // Internal address of the word to read
+    logic [ObiCfg.IdWidth-1:0] id_d, id_q; // Id of the request, must be same for the response
+    // Signals used to create the response
+    logic [ObiCfg.DataWidth-1:0] rsp_data; // Data field of the obi response
+    logic rsp_err; // Error field of the obi response
+    // Wire the registers holding the request
+    // TODO 1 : Modify the code such that the ROM will respond after 2 cycles instead of 1
+    assign req_d = obi_req_i.req;
     assign id_d = obi_req_i.a.aid;
     assign we_d = obi_req_i.a.we;
     assign addr_d = obi_req_i.a.addr;
-
-    always_ff @(posedge clk_i or negedge rst_ni) begin
+    always_ff @(posedge (clk_i) or negedge (rst_ni)) begin
         if (!rst_ni) begin
             req_q <= '0;
             id_q <= '0;
@@ -51,72 +48,42 @@ module obi_spi_rom #(
             addr_q <= addr_d;
         end
     end
-
-    // Static ROM content: "Felix Niederer, Raphael Salzmann\0"
-    // String is 33 characters + null terminator = 34 bytes
-    // We'll store it as 32-bit words (little-endian)
-    logic [31:0] rom_data [0:8]; // 9 words to hold 34 bytes (rounded up)
-
-    // Initialize ROM with the string "Felix Niederer, Raphael Salzmann"
-    initial begin
-        // "Feli" (0x696c6546)
-        rom_data[0] = 32'h696c6546;
-        // "x Ni" (0x694e2078)
-        rom_data[1] = 32'h694e2078;
-        // "eder" (0x72656465)
-        rom_data[2] = 32'h72656465;
-        // "er, " (0x202c7265)
-        rom_data[3] = 32'h202c7265;
-        // "Raph" (0x68706152)
-        rom_data[4] = 32'h68706152;
-        // "ael " (0x206c6561)
-        rom_data[5] = 32'h206c6561;
-        // "Salz" (0x7a6c6153)
-        rom_data[6] = 32'h7a6c6153;
-        // "mann" (0x6e6e616d)
-        rom_data[7] = 32'h6e6e616d;
-        // "\0\0\0\0" (0x00000000) - null terminator and padding
-        rom_data[8] = 32'h00000000;
-    end
-
-    // Signals used to create the response
-    logic [ObiCfg.DataWidth-1:0] rsp_data;
-    logic rsp_err;
-    logic [31:0] word_addr;
-
+    // Assign the response data
+    // TODO 2 : Modify the code such that the ROM will contain (up to) 32 ASCII chars
+    // hold in your initials in the form: "JD&JD's ASIC\0"
+    logic [2:0] word_addr;
     always_comb begin
         rsp_data = '0;
         rsp_err = '0;
-        word_addr = (addr_q - BaseAddr) >> 2; // Convert byte address to word address
-
-        if (req_q) begin
-            if (we_q) begin
-                // Write request - do nothing (ignore writes)
-                rsp_data = '0;
-                rsp_err = '0;
+        word_addr = addr_q[4:2];
+        if(req_q) begin
+            if(~we_q) begin
+                case(word_addr)
+                    // "Felix Niederer, Raphael Salzmann" + null terminator
+                    // String: "Felix Niederer, Raphael Salzmann\0"
+                    // Total: 29 chars + 1 null = 30 bytes, fits in 8 words of 32 bits each
+                    3'h0: rsp_data = 32'h78696c65; // "xile" (little-endian: "elix")
+                    3'h1: rsp_data = 32'h654e2046; // "eN F" (little-endian: "F Ne")
+                    3'h2: rsp_data = 32'h72656469; // "redi" (little-endian: "ider")
+                    3'h3: rsp_data = 32'h522c7265; // "R,re" (little-endian: "er, ")
+                    3'h4: rsp_data = 32'h61687061; // "ahpa" (little-endian: "apha")
+                    3'h5: rsp_data = 32'h53206c65; // "S le" (little-endian: "el S")
+                    3'h6: rsp_data = 32'h6d7a6c61; // "mzla" (little-endian: "alzm")
+                    3'h7: rsp_data = 32'h00006e61; // "\0\0na" (little-endian: "ann\0")
+                    default: rsp_data = 32'h0;
+                endcase
             end else begin
-                // Read request
-                if (word_addr < 9) begin
-                    rsp_data = rom_data[word_addr];
-                    rsp_err = '0;
-                end else begin
-                    // Address out of ROM range
-                    rsp_data = '0;
-                    rsp_err = '1;
-                end
+                rsp_err = '1;
             end
         end
     end
-
     // Wire the response
     // A channel
-    assign obi_rsp_o.gnt = obi_req_i.req && addr_in_range;
-    
+    assign obi_rsp_o.gnt = obi_req_i.req;
     // R channel:
     assign obi_rsp_o.rvalid = req_q;
     assign obi_rsp_o.r.rdata = rsp_data;
     assign obi_rsp_o.r.rid = id_q;
     assign obi_rsp_o.r.err = rsp_err;
     assign obi_rsp_o.r.r_optional = '0;
-
 endmodule
