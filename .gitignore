@@ -79,4 +79,4 @@
 /openroad/save
 #/openroad/src
 #yosys
-# /yosys/out
+/yosys/out
