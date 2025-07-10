@@ -15,7 +15,7 @@ module ring_oscillator (
     end
 
    
-    always #500 dummy_clk = ~dummy_clk; // 1MHz simulated clock
+    always #500000 dummy_clk = ~dummy_clk; // 1MHz simulated clock
 
     assign osc_out = dummy_osc;
 
