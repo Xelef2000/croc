@@ -80,9 +80,11 @@ int main() {
     volatile uint32_t* rom_ptr = (volatile uint32_t*)ROM_BASE;
     for (int i = 0; i < 9; i++) {
         volatile uint32_t val = *rom_ptr;
-        printf("ROM: 0x%x\n", val);
+        char* chars = (char*)&val;
+        printf("ROM chars: %c%c%c%c\n", chars[0], chars[1], chars[2], chars[3]);
         rom_ptr++;
     }
+
 
     uart_write_flush();
 
@@ -117,7 +119,7 @@ int main() {
     printf("Generating more random numbers:\n");
     for(int i = 0; i < 5; i++) {
         uint32_t rnd = *prng_ptr_0;
-        printf("PRNG_0[%d]: 0x%x\n", i, rnd);
+        printf("PRNG_0: 0x%x\n", rnd);
         
         // Small delay between reads
         for(volatile int j=0; j<100; j++) { asm("nop"); }
