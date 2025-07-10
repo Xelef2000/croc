@@ -115,17 +115,31 @@ module user_domain import user_pkg::*; import croc_pkg::*; #(
 
 
   // ROM Subordinate
-  user_rom #(
+  // user_rom #(
+  //   .ObiCfg      ( SbrObiCfg     ),
+  //   .obi_req_t   ( sbr_obi_req_t ),
+  //   .obi_rsp_t   ( sbr_obi_rsp_t ),
+  //   .BaseAddr   ( UserRomAddrOffset )
+  // ) i_user_rom (
+  //   .clk_i,
+  //   .rst_ni,
+  //   .obi_req_i  ( user_rom_obi_req ),
+  //   .obi_rsp_o  ( user_rom_obi_rsp )
+  // ); 
+
+
+    obi_rand #(
     .ObiCfg      ( SbrObiCfg     ),
     .obi_req_t   ( sbr_obi_req_t ),
     .obi_rsp_t   ( sbr_obi_rsp_t ),
-    .BaseAddr   ( UserRomAddrOffset )
+    .BaseAddr    (UserRomAddrOffset ),
+    .Size        ( UserRomAddrRange)
   ) i_user_rom (
     .clk_i,
     .rst_ni,
     .obi_req_i  ( user_rom_obi_req ),
     .obi_rsp_o  ( user_rom_obi_rsp )
-  ); 
+  );
 
 
   obi_rand #(
