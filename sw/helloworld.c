@@ -11,11 +11,12 @@
 #include "gpio.h"
 #include "util.h"
 
-
+// ROM address space
 #define ROM_BASE 0x20000000
 #define ROM_SIZE 36
 
-#define PRNG_BASE (ROM_BASE + 0x1000) // 4KB offset for PRNGs
+// PRNG address space (moved to separate range)
+#define PRNG_BASE 0x20001000
 #define PRNG_0    (PRNG_BASE + 0x0)  // First PRNG
 #define PRNG_1    (PRNG_BASE + 0x4)  // Second PRNG
 
@@ -107,8 +108,7 @@ int main() {
     printf("Tock\n");
     uart_write_flush();
 
-
-
+    // Read and display ROM string
     char rom_string[64];  // Buffer for the string
     int length = read_rom_string(rom_string, sizeof(rom_string));
     
@@ -121,42 +121,45 @@ int main() {
     for (int i = 0; i < 9; i++) {
         printf("Word %d: 0x%x\n", i, rom_ptr[i]);
     }
-    
-    // wait until uart has finished sending
-
-    // // 32'h2000_0000;
-    // volatile uint32_t* random_ptr = (volatile uint32_t*)0x20000000; // Pointer to RAM address
-    // printf("pointer created\n");
-    // uart_write_flush();
-    
-    // // Add a delay to ensure UART output completes
-    // for(volatile int i=0; i<1000; i++) { asm("nop"); }
-
-    // uint32_t seed = 0x600;
-    // // Write the seed to the random number generator
-    // *random_ptr = seed; // Write the seed to the address 0x200000
-    // uint32_t random_val = *random_ptr;
-    // printf("Random value read from 0x20000000: 0x%x\n", random_val);
-
-    // random_ptr = (volatile uint32_t*)0x20000008; // Pointer to RAM address
-    // printf("pointer created\n");
-    // uart_write_flush();
-    
-    // // Add a delay to ensure UART output completes
-    // for(volatile int i=0; i<1000; i++) { asm("nop"); }
-
-    // seed = 0x600;
-    // // Write the seed to the random number generator
-    // // *random_ptr = seed; // Write the seed to the address 0x200000
-    // random_val = *random_ptr;
-    // printf("Random value read from 0x20000004: 0x%x\n", random_val);
-    
-
-
     uart_write_flush();
 
+    // Test PRNG functionality with updated addresses
+    printf("Testing PRNG at new address 0x%x\n", PRNG_BASE);
+    
+    volatile uint32_t* prng_ptr_0 = (volatile uint32_t*)PRNG_0;
+    volatile uint32_t* prng_ptr_1 = (volatile uint32_t*)PRNG_1;
+    
+    printf("PRNG pointers created\n");
+    uart_write_flush();
+    
+    // Add a delay to ensure UART output completes
+    for(volatile int i=0; i<1000; i++) { asm("nop"); }
 
+    uint32_t seed = 0x600;
+    // Write the seed to the first PRNG
+    *prng_ptr_0 = seed;
+    uint32_t random_val_0 = *prng_ptr_0;
+    printf("Random value from PRNG_0 (0x%x): 0x%x\n", PRNG_0, random_val_0);
+    uart_write_flush();
+    
+    // Add a delay
+    for(volatile int i=0; i<1000; i++) { asm("nop"); }
 
+    // Test second PRNG
+    uint32_t random_val_1 = *prng_ptr_1;
+    printf("Random value from PRNG_1 (0x%x): 0x%x\n", PRNG_1, random_val_1);
+    uart_write_flush();
+
+    // Generate a few more random numbers to demonstrate functionality
+    printf("Generating more random numbers:\n");
+    for(int i = 0; i < 5; i++) {
+        uint32_t rnd = *prng_ptr_0;
+        printf("PRNG_0[%d]: 0x%x\n", i, rnd);
+        
+        // Small delay between reads
+        for(volatile int j=0; j<100; j++) { asm("nop"); }
+    }
+    uart_write_flush();
 
     return 1;
 }

@@ -1,6 +1,0 @@
-  violation type: Short
-    srcs: net:i_croc_soc/i_croc/i_core_wrap/_4362_ net:VDD 
-    bbox = ( 1197.5, 1254.86 ) - ( 1197.7, 1255.06 ) on Layer Metal2
-  violation type: Short
-    srcs: net:i_croc_soc/i_croc/_3003_ net:VSS 
-    bbox = ( 1129.4, 1364.48 ) - ( 1129.61, 1364.68 ) on Layer Metal2
