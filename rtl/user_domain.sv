@@ -119,8 +119,7 @@ module user_domain import user_pkg::*; import croc_pkg::*; #(
     .ObiCfg      ( SbrObiCfg     ),
     .obi_req_t   ( sbr_obi_req_t ),
     .obi_rsp_t   ( sbr_obi_rsp_t ),
-    .BaseAddr   ( UserRomAddrOffset ),
-    .Size       ( UserRomAddrRange )
+    .BaseAddr   ( UserRomAddrOffset )
   ) i_user_rom (
     .clk_i,
     .rst_ni,
