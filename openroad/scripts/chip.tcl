@@ -336,9 +336,6 @@ global_connect
 save_checkpoint ${log_id_str}_${proj_name}.final
 report_image "${log_id_str}_${proj_name}.final" true true false true
 define_process_corner -ext_model_index 0 X
-extract_parasitics -ext_model_file IHP_rcx_patterns.rules
-write_spef out/${proj_name}.spef
-read_spef  out/${proj_name}.spef; # readback parasitics for OpenSTA
 report_metrics "${log_id_str}_${proj_name}.final"
 
 utl::report "Write output"
@@ -347,5 +344,12 @@ write_verilog -include_pwr_gnd -remove_cells "$stdfill bondpad*" out/${proj_name
 write_verilog                  out/${proj_name}.v
 write_db                       out/${proj_name}.odb
 write_sdc                      out/${proj_name}.sdc
+
+
+extract_parasitics -ext_model_file IHP_rcx_patterns.rules
+write_spef out/${proj_name}.spef
+read_spef  out/${proj_name}.spef; # readback parasitics for OpenSTA
+report_metrics "${log_id_str}_${proj_name}_after_parasitics.final"
+
 
 exit
