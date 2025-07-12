@@ -51,7 +51,7 @@
 
   libs    = SG13G2_1.3.1 \
             open_stdcell_v3.2 \
-            open_io_v0.1 \ 
+            open_io_v0.2 \ 
             open_sram_v2.1
 
 
