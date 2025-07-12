@@ -3,7 +3,7 @@ Warning: There are 4 output ports missing set_output_delay.
   unused1_o
   unused2_o
   unused3_o
-Warning: There are 327 unconstrained endpoints.
+Warning: There are 321 unconstrained endpoints.
   unused0_o
   unused1_o
   unused2_o
@@ -325,25 +325,19 @@ Warning: There are 327 unconstrained endpoints.
   i_croc_soc/i_user/i_obi_demux.mgr_ports_rsp_i_43__reg/D
   i_croc_soc/i_user/i_obi_demux.mgr_ports_rsp_i_82__reg/D
   i_croc_soc/i_user/i_user_rand.i_trand.u_trng.meta_ff1_reg/D
-  i_croc_soc/i_user/i_user_rom.addr_q_12__reg/D
-  i_croc_soc/i_user/i_user_rom.addr_q_13__reg/D
-  i_croc_soc/i_user/i_user_rom.addr_q_14__reg/D
-  i_croc_soc/i_user/i_user_rom.addr_q_15__reg/D
-  i_croc_soc/i_user/i_user_rom.addr_q_20__reg/D
-  i_croc_soc/i_user/i_user_rom.addr_q_31__reg/D
 max_delay/setup group asynchronous
 
                                      Required  Actual
 Endpoint                               Delay   Delay   Slack
 ------------------------------------------------------------
-i_croc_soc/i_croc/all_periph_obi_rsp_100__reg/RESET_B (sg13g2_dfrbp_1)   -0.66   71.67  -72.32 (VIOLATED)
+i_croc_soc/i_croc/all_periph_obi_rsp_100__reg/RESET_B (sg13g2_dfrbp_1)   -0.57   71.20  -71.77 (VIOLATED)
 
 max_delay/setup group path delay
 
                                      Required  Actual
 Endpoint                               Delay   Delay   Slack
 ------------------------------------------------------------
-i_croc_soc/i_croc/i_dm_top.i_dm_top/i_dm_csrs.progbuf_o_101__reg/D (sg13g2_dfrbp_1)    4.28    1.83    2.45 (MET)
+i_croc_soc/i_croc/i_dm_top.i_dm_top/data_csrs_mem_0__reg/D (sg13g2_dfrbp_1)    4.28    1.74    2.54 (MET)
 
 max_delay/setup group clk_jtg
 
@@ -357,21 +351,21 @@ max_delay/setup group clk_sys
                                      Required  Actual
 Endpoint                               Delay   Delay   Slack
 ------------------------------------------------------------
-status_o (output)                       8.65    6.57    2.08 (MET)
+status_o (output)                       8.65    6.99    1.66 (MET)
 
 max_delay/setup group asynchronous
 
                                      Required  Actual
 Endpoint                               Delay   Delay   Slack
 ------------------------------------------------------------
-i_croc_soc/i_croc/all_periph_obi_rsp_100__reg/RESET_B (sg13g2_dfrbp_1)   -0.66   71.67  -72.32 (VIOLATED)
+i_croc_soc/i_croc/all_periph_obi_rsp_100__reg/RESET_B (sg13g2_dfrbp_1)   -0.57   71.20  -71.77 (VIOLATED)
 
 max_delay/setup group path delay
 
                                      Required  Actual
 Endpoint                               Delay   Delay   Slack
 ------------------------------------------------------------
-i_croc_soc/i_croc/i_dm_top.i_dm_top/i_dm_csrs.progbuf_o_101__reg/D (sg13g2_dfrbp_1)    4.28    1.83    2.45 (MET)
+i_croc_soc/i_croc/i_dm_top.i_dm_top/data_csrs_mem_0__reg/D (sg13g2_dfrbp_1)    4.28    1.74    2.54 (MET)
 
 max_delay/setup group clk_jtg
 
@@ -385,21 +379,21 @@ max_delay/setup group clk_sys
                                      Required  Actual
 Endpoint                               Delay   Delay   Slack
 ------------------------------------------------------------
-status_o (output)                       8.65    6.57    2.08 (MET)
+status_o (output)                       8.65    6.99    1.66 (MET)
 
 max_delay/setup group asynchronous
 
                                      Required  Actual
 Endpoint                               Delay   Delay   Slack
 ------------------------------------------------------------
-i_croc_soc/i_croc/all_periph_obi_rsp_100__reg/RESET_B (sg13g2_dfrbp_1)   -0.66   71.67  -72.32 (VIOLATED)
+i_croc_soc/i_croc/all_periph_obi_rsp_100__reg/RESET_B (sg13g2_dfrbp_1)   -0.57   71.20  -71.77 (VIOLATED)
 
 max_delay/setup group path delay
 
                                      Required  Actual
 Endpoint                               Delay   Delay   Slack
 ------------------------------------------------------------
-i_croc_soc/i_croc/i_dm_top.i_dm_top/i_dm_csrs.progbuf_o_101__reg/D (sg13g2_dfrbp_1)    4.28    1.83    2.45 (MET)
+i_croc_soc/i_croc/i_dm_top.i_dm_top/data_csrs_mem_0__reg/D (sg13g2_dfrbp_1)    4.28    1.74    2.54 (MET)
 
 max_delay/setup group clk_jtg
 
@@ -413,5 +407,5 @@ max_delay/setup group clk_sys
                                      Required  Actual
 Endpoint                               Delay   Delay   Slack
 ------------------------------------------------------------
-status_o (output)                       8.65    6.57    2.08 (MET)
+status_o (output)                       8.65    6.99    1.66 (MET)
 
