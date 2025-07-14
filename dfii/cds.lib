@@ -6,5 +6,5 @@ DEFINE TL_SG13 ${IHP_TECH}/lib/TL_SG13/TL_SG13
 DEFINE ahdlLib ${CDSHOME}/tools/dfII/samples/artist/ahdlLib
 DEFINE analogLib ${CDSHOME}/tools/dfII/etc/cdslib/artist/analogLib
 DEFINE basic ${CDSHOME}/tools/dfII/etc/cdslib/basic
-DEFINE sg13g2_io /usr/pack/ihp-sg13-kgf/open_ihp_sg13g2/sg13g2_io/v0.1/dfii.dz/sg13g2_io
+DEFINE sg13g2_io /usr/pack/ihp-sg13-kgf/open_ihp_sg13g2/sg13g2_io/v0.2/dfii.dz/sg13g2_io
 DEFINE sg13g2_stdcell /usr/pack/ihp-sg13-kgf/open_ihp_sg13g2/sg13g2_stdcell/v3.2/dfii.dz/sg13g2_stdcell
