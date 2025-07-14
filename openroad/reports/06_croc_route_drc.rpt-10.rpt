@@ -1,3 +1,9 @@
   violation type: Short
+    srcs: net:i_croc_soc/i_croc/i_core_wrap/_4413_ net:VDD 
+    bbox = ( 1199.31, 1307.78 ) - ( 1199.51, 1307.98 ) on Layer Metal2
+  violation type: Short
     srcs: net:i_croc_soc/i_croc/_2844_ net:VSS 
-    bbox = ( 1129.82, 1447.64 ) - ( 1130.02, 1447.84 ) on Layer Metal2
+    bbox = ( 1128.92, 1447.64 ) - ( 1129.12, 1447.84 ) on Layer Metal2
+  violation type: Recheck
+    srcs: net:i_croc_soc/i_croc/core_data_obi_req_50_ 
+    bbox = ( 1104.59, 1355.24 ) - ( 1104.6, 1355.44 ) on Layer Metal2
