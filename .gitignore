@@ -1,3 +1,5 @@
 .bender
 tmp
 *.log
+slang.so
+tmrx.so

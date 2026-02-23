@@ -12,6 +12,7 @@ if {[info script] ne ""} {
 }
 
 # Configuration variables are in yosys_common
+puts "test"
 source scripts/yosys_common.tcl
 
 # ABC logic optimization script
@@ -20,7 +21,9 @@ set abc_script [processAbcScript scripts/abc-opt.script]
 # read liberty files and prepare some variables
 source scripts/init_tech.tcl
 
-yosys plugin -i slang.so
+yosys plugin -i /home/felix/Documents/Projects/VLSI/croc/slang.so
+yosys plugin -i /home/felix/Documents/Projects/VLSI/croc/tmrx.so
+
 # default from yosys_common.tcl: top_design=croc_chip; sv_flist=./croc.flist
 yosys read_slang --top $top_design -f $sv_flist \
         --compat-mode --keep-hierarchy \
@@ -77,7 +80,7 @@ yosys write_verilog -norename -noexpr -attr2comment ${tmp_dir}/${proj_name}_yosy
 yosys opt_expr
 yosys opt -noff
 yosys fsm
-yosys wreduce 
+yosys wreduce
 yosys peepopt
 yosys opt_clean
 yosys opt -full
@@ -88,10 +91,14 @@ yosys memory -nomap
 yosys memory_map
 yosys opt -fast
 
+
+
 yosys opt_dff -sat -nodffe -nosdff
 yosys share
 yosys opt -full
 yosys clean -purge
+
+yosys tmrx_mark
 
 yosys clean -purge
 yosys write_verilog -norename -noexpr ${tmp_dir}/${proj_name}_yosys_abstract.v
@@ -158,6 +165,22 @@ yosys clean -purge
 # map constants to tie cells
 yosys hilomap -singleton -hicell {*}$tech_cell_tiehi -locell {*}$tech_cell_tielo
 
+yosys tmrx
+
+
+yosys dfflibmap {*}$tech_cells_args
+
+# then perform bit-level optimization and mapping on all combinational clouds in ABC
+# target period (per optimized block/module) in picoseconds
+set period_ps 10000
+# pre-process abc file (written to tmp directory)
+set abc_comb_script   [processAbcScript scripts/abc-opt.script]
+# call ABC
+yosys abc {*}$tech_cells_args -D $period_ps -script $abc_comb_script -constr src/abc.constr {*}$dont_use_args -showtmp
+
+yosys clean -purge
+
+
 # final reports
 yosys tee -q -o "${rep_dir}/${proj_name}_synth.rpt" check
 yosys tee -q -o "${rep_dir}/${proj_name}_area.rpt" stat -top $top_design {*}$liberty_args
@@ -165,4 +188,3 @@ yosys tee -q -o "${rep_dir}/${proj_name}_area_logic.rpt" stat -top $top_design {
 
 # final netlist
 yosys write_verilog -noattr -noexpr -nohex -nodec ${out_dir}/${proj_name}_yosys.v
-
